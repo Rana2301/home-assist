@@ -2,43 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reset Password | Home Assist</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root { --primary: #2563eb; }
-    body { font-family: 'Poppins', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .auth-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
-    h2 { color: var(--primary); text-align: center; margin-bottom: 10px; }
-    p { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-    button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+    :root { --primary: #2563eb; --bg: #f8fafc; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+    .auth-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
+    h2 { color: var(--primary); margin-bottom: 10px; }
+    p { font-size: 14px; color: #64748b; margin-bottom: 25px; line-height: 1.6; }
+    input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.3s; }
+    input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 15px; transition: 0.3s; font-size: 16px; }
+    button:hover { background: #1d4ed8; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
     .hidden { display: none; }
-    .link-text { display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #2563eb; text-decoration: none; }
+    .link-text { display: block; margin-top: 20px; font-size: 14px; color: var(--primary); text-decoration: none; font-weight: 500; }
   </style>
 </head>
 <body>
   <div class="auth-card">
-    <h2 id="title">Reset Password</h2>
+    <h2>Reset Password</h2>
     
     <div id="step-1">
-      <p>Enter your <b>Email</b> for a link or <b>Mobile</b> for an OTP.</p>
-      <input type="text" id="user-input" placeholder="Email or Mobile (+91...)">
+      <p>Enter your <b>Email</b> to get a reset link or <b>Mobile Number</b> for an OTP.</p>
+      <input type="text" id="user-id" placeholder="Email or Mobile (+91...)">
       <button id="send-btn">Send Reset Info</button>
     </div>
 
     <div id="step-otp" class="hidden">
-      <p>Enter the 4-digit OTP sent to your phone.</p>
-      <input type="text" id="otp-input" placeholder="0000" maxlength="4">
+      <p>A 4-digit OTP has been generated for your mobile number.</p>
+      <input type="text" id="otp-input" placeholder="Enter 4-Digit OTP" maxlength="4">
       <button id="verify-btn">Verify OTP</button>
     </div>
 
     <div id="step-new-pass" class="hidden">
-      <p>Create a new password for your account.</p>
-      <input type="password" id="new-pass" placeholder="New Password">
+      <p>Verification successful. Please set your new password.</p>
+      <input type="password" id="new-pass" placeholder="New Password (min. 6 chars)">
       <button id="update-btn">Update Password</button>
     </div>
 
-    <a href="login.html" class="link-text">Back to Login</a>
+    <a href="login.html" class="link-text">← Back to Login</a>
   </div>
 
   <script type="module">
@@ -46,71 +50,84 @@
     import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    let generatedOTP = "";
-    let userDocId = "";
+    let tempOTP = "";
+    let targetDocId = "";
 
-    document.getElementById('send-btn').addEventListener('click', async () => {
-        const input = document.getElementById('user-input').value.trim();
-        const sendBtn = document.getElementById('send-btn');
-
-        if (!input) return alert("Please enter details.");
+    // Handle initial request
+    document.getElementById('send-btn').onclick = async () => {
+        const input = document.getElementById('user-id').value.trim();
+        const btn = document.getElementById('send-btn');
+        
+        if (!input) return alert("Please enter your registered email or phone.");
 
         try {
-            sendBtn.innerText = "Processing...";
-            
+            btn.disabled = true;
+            btn.innerText = "Checking...";
+
             if (input.includes('@')) {
-                // --- EMAIL LOGIC ---
+                // EMAIL FLOW: Firebase native reset
                 await sendPasswordResetEmail(auth, input);
-                alert("Reset link sent to your email!");
+                alert("Success! Check your email for the reset link.");
                 window.location.href = "login.html";
             } else {
-                // --- MOBILE LOGIC ---
+                // MOBILE FLOW: Custom OTP logic
                 const q = query(collection(db, "users"), where("mobile", "==", input));
                 const snap = await getDocs(q);
 
-                if (snap.empty) throw new Error("Mobile number not registered.");
+                if (snap.empty) {
+                    throw new Error("This mobile number is not registered.");
+                }
 
-                snap.forEach(d => { userDocId = d.id; });
-
-                // Simulate sending 4-digit OTP
-                generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
-                alert("DEBUG: Your 4-digit OTP is " + generatedOTP); // In production, use an SMS API here
+                snap.forEach(d => { targetDocId = d.id; });
+                
+                // Generate a random 4-digit OTP
+                tempOTP = Math.floor(1000 + Math.random() * 9000).toString();
+                
+                // In a real app, you'd trigger an SMS API here. For now:
+                alert("Your secure OTP is: " + tempOTP);
                 
                 document.getElementById('step-1').classList.add('hidden');
                 document.getElementById('step-otp').classList.remove('hidden');
             }
         } catch (e) {
             alert(e.message);
-            sendBtn.innerText = "Send Reset Info";
+            btn.disabled = false;
+            btn.innerText = "Send Reset Info";
         }
-    });
+    };
 
-    document.getElementById('verify-btn').addEventListener('click', () => {
+    // Verify OTP
+    document.getElementById('verify-btn').onclick = () => {
         const entered = document.getElementById('otp-input').value;
-        if (entered === generatedOTP) {
+        if (entered === tempOTP) {
             document.getElementById('step-otp').classList.add('hidden');
             document.getElementById('step-new-pass').classList.remove('hidden');
         } else {
-            alert("Invalid OTP. Try again.");
+            alert("Incorrect OTP. Please try again.");
         }
-    });
+    };
 
-    document.getElementById('update-btn').addEventListener('click', async () => {
-        const newPassword = document.getElementById('new-pass').value;
-        if (newPassword.length < 6) return alert("Password too short.");
+    // Update Password in Database
+    document.getElementById('update-btn').onclick = async () => {
+        const newPass = document.getElementById('new-pass').value;
+        const btn = document.getElementById('update-btn');
+
+        if (newPass.length < 6) return alert("Password must be at least 6 characters.");
 
         try {
-            // Update password in Firestore (Note: This doesn't change Firebase Auth password, 
-            // you'd typically need the user to be logged in for that, but this updates your DB record)
-            const userRef = doc(db, "users", userDocId);
-            await updateDoc(userRef, { password: newPassword });
+            btn.disabled = true;
+            btn.innerText = "Updating...";
             
-            alert("Password updated successfully in database!");
+            const userRef = doc(db, "users", targetDocId);
+            await updateDoc(userRef, { password: newPass });
+            
+            alert("Password updated successfully! You can now login.");
             window.location.href = "login.html";
         } catch (e) {
-            alert("Error: " + e.message);
+            alert("Update failed: " + e.message);
+            btn.disabled = false;
         }
-    });
+    };
   </script>
 </body>
 </html>

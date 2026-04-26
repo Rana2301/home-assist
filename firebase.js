@@ -3,7 +3,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebas
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCuDXQdLm08m07pyAh9veb1y9-k1uBAXb4",
+  apiKey: "AIzaSyCuDXQdLm08m07pyAh9veb1y9-k1uBAXb4", // [cite: 2]
   authDomain: "home-service-app-aa41f.firebaseapp.com",
   projectId: "home-service-app-aa41f",
   storageBucket: "home-service-app-aa41f.firebasestorage.app",
@@ -11,6 +11,6 @@ const firebaseConfig = {
   appId: "1:227416332672:web:8b845f1b0f4056ac67c965"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig); // [cite: 3]
 export const db = getFirestore(app);
 export const auth = getAuth(app);

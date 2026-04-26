@@ -37,6 +37,24 @@
       margin: 0 auto;
     }
 
+    .nav-links { 
+  display: flex; 
+  align-items: center; 
+  gap: 20px; /* Increased gap for better readability */
+}
+
+.nav-links a { 
+  text-decoration: none; 
+  color: #64748b; 
+  font-size: 14px; 
+  font-weight: 500; 
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--primary); /* Adds a nice hover effect */
+}
+
     /* FIX: Styling for the Logo and Title container */
     .logo-container {
       display: flex;
@@ -127,10 +145,12 @@
         <span class="logo-text">Home Assist</span>
       </a>
 
-      <nav class="nav-links">
-        <a href="#services">Services</a>
-        <a href="login.html" class="btn-login">Login</a>
-      </nav>
+  <nav class="nav-links">
+  <a href="index.html#services">Services</a>
+  <a href="about.html">About Us</a> 
+  <a href="contact.html">Contact Us</a>
+  <a href="login.html" class="btn-login">Login</a>
+</nav>
     </div>
   </header>
 
@@ -182,32 +202,60 @@
     import { db, auth } from "./firebase.js";
     import { addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    window.searchService = function() {
-        const query = document.getElementById('service').value;
-        if(query) alert("Searching for " + query + "...");
-    };
+    import { auth } from "./firebase.js";
+
+auth.onAuthStateChanged(user => {
+    const logoContainer = document.querySelector('.logo-container');
+    const loginBtn = document.querySelector('.btn-login');
+
+    if (user) {
+        const firstLetter = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
+        // Changes title to Hello, [Letter]
+        logoContainer.innerHTML = `<span style="background:var(--primary); color:white; padding:5px 12px; border-radius:50%; margin-right:10px;">${firstLetter}</span> <span class="logo-text">Hello, ${user.displayName}</span>`;
+        
+        // Change Login button to Logout
+        loginBtn.innerText = "Logout";
+        loginBtn.onclick = () => window.logout(); 
+    }
+});
+
+   window.searchService = function() {
+    const query = document.getElementById('service').value;
+    const loc = document.getElementById('location').value;
+    
+    if(query) {
+        // Redirects to a services page with search parameters in the URL
+        window.location.href = `services.html?query=${query}&location=${loc}`;
+    } else {
+        alert("Please enter a service name.");
+    }
+};
 
     window.bookService = async function(type) {
-        const user = auth.currentUser;
-        if(!user) {
-            alert("Please login first to book.");
-            window.location.href = "login.html";
-            return;
-        }
+    const user = auth.currentUser;
+    if(!user) {
+        alert("Please login first to book.");
+        window.location.href = "login.html";
+        return;
+    }
 
-        try {
-            await addDoc(collection(db, "bookings"), {
-                userId: user.uid,
-                serviceType: type,
-                status: "pending",
-                time: Date.now(),
-                location: document.getElementById('location').value || "Not specified"
-            });
-            alert("🎉 Booking Confirmed for " + type + "!");
-        } catch (e) {
-            alert("Booking Failed: " + e.message);
-        }
-    };
+    try {
+        await addDoc(collection(db, "bookings"), {
+            userId: user.uid,
+            serviceType: type,
+            status: "pending",
+            time: Date.now(),
+            location: document.getElementById('location').value || "Not specified"
+        });
+        
+        // REDIRECT LOGIC:
+        // Change "services.html" to whatever page you want to open next
+        window.location.href = "services.html?service=" + type; 
+        
+    } catch (e) {
+        alert("Booking Failed: " + e.message);
+    }
+};
   </script>
   <script type="module" src="app.js"></script>
 </body>

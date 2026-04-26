@@ -204,18 +204,28 @@
 
     import { auth } from "./firebase.js";
 
-auth.onAuthStateChanged(user => {
-    const logoContainer = document.querySelector('.logo-container');
-    const loginBtn = document.querySelector('.btn-login');
+import { auth } from "./firebase.js";
+
+auth.onAuthStateChanged((user) => {
+    const logoText = document.querySelector('.logo-text');
+    const loginLink = document.querySelector('.btn-login');
 
     if (user) {
+        // Get the first letter of the name
         const firstLetter = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
-        // Changes title to Hello, [Letter]
-        logoContainer.innerHTML = `<span style="background:var(--primary); color:white; padding:5px 12px; border-radius:50%; margin-right:10px;">${firstLetter}</span> <span class="logo-text">Hello, ${user.displayName}</span>`;
         
+        // Update the Title/Logo area on the left
+        logoText.innerHTML = `
+            <span style="background:#fff; color:#2563eb; padding:2px 10px; border-radius:50%; margin-right:8px;">${firstLetter}</span>
+            Hello, ${user.displayName.split(' ')[0]}
+        `;
+
         // Change Login button to Logout
-        loginBtn.innerText = "Logout";
-        loginBtn.onclick = () => window.logout(); 
+        loginLink.innerText = "Logout";
+        loginLink.href = "#";
+        loginLink.onclick = () => {
+            auth.signOut().then(() => window.location.href = "index.html");
+        };
     }
 });
 

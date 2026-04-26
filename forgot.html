@@ -2,75 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reset Password | Home Assist</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root { --primary: #2563eb; --bg: #f8fafc; }
-    body { font-family: 'Poppins', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-    .auth-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
-    h2 { color: var(--primary); margin-bottom: 10px; }
-    p { font-size: 14px; color: #64748b; margin-bottom: 25px; line-height: 1.6; }
-    input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.3s; }
-    input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-    button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 15px; transition: 0.3s; font-size: 16px; }
-    button:hover { background: #1d4ed8; }
-    button:disabled { background: #94a3b8; cursor: not-allowed; }
-    .hidden { display: none; }
-    .link-text { display: block; margin-top: 20px; font-size: 14px; color: var(--primary); text-decoration: none; font-weight: 500; }
+    :root { --primary: #2563eb; }
+    body { font-family: 'Poppins', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .auth-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
+    h2 { color: var(--primary); text-align: center; margin-bottom: 10px; }
+    p { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; line-height: 1.5; }
+    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+    button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+    button:disabled { background: #94a3b8; }
+    .link-text { display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #2563eb; text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="auth-card">
     <h2>Reset Password</h2>
+    <p>Enter your <b>Email</b> or <b>Registered Mobile Number</b> to receive a reset link.</p>
     
-    <div id="step-1">
-      <p>Enter your <b>Email</b> to get a reset link or <b>Mobile Number</b> for an OTP.</p>
-      <input type="text" id="user-id" placeholder="Email or Mobile (+91...)">
-      <button id="send-btn">Send Reset Info</button>
-    </div>
-
-    <div id="step-otp" class="hidden">
-      <p>A 4-digit OTP has been generated for your mobile number.</p>
-      <input type="text" id="otp-input" placeholder="Enter 4-Digit OTP" maxlength="4">
-      <button id="verify-btn">Verify OTP</button>
-    </div>
-
-    <div id="step-new-pass" class="hidden">
-      <p>Verification successful. Please set your new password.</p>
-      <input type="password" id="new-pass" placeholder="New Password (min. 6 chars)">
-      <button id="update-btn">Update Password</button>
-    </div>
-
-    <a href="login.html" class="link-text">← Back to Login</a>
+    <input type="text" id="user-identifier" placeholder="Email or Mobile (+91...)" required>
+    
+    <button id="reset-btn">Send Reset Link</button>
+    <a href="login.html" class="link-text">Back to Login</a>
   </div>
 
   <script type="module">
     import { auth, db } from "./firebase.js";
     import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    let tempOTP = "";
-    let targetDocId = "";
+    document.getElementById('reset-btn').addEventListener('click', async () => {
+        const input = document.getElementById('user-identifier').value.trim();
+        const btn = document.getElementById('reset-btn');
 
-    // Handle initial request
-    document.getElementById('send-btn').onclick = async () => {
-        const input = document.getElementById('user-id').value.trim();
-        const btn = document.getElementById('send-btn');
-        
-        if (!input) return alert("Please enter your registered email or phone.");
+        if (!input) {
+            alert("Please enter your email or mobile number.");
+            return;
+        }
 
         try {
+            btn.innerText = "Verifying...";
             btn.disabled = true;
-            btn.innerText = "Checking...";
 
-            if (input.includes('@')) {
-                // EMAIL FLOW: Firebase native reset
-                await sendPasswordResetEmail(auth, input);
-                alert("Success! Check your email for the reset link.");
-                window.location.href = "login.html";
-            } else {
-               // --- MOBILE LOGIC (Updated for Real SMS) ---
+            let targetEmail = input;
+
+          // --- MOBILE LOGIC (Updated for Real SMS) ---
 const q = query(collection(db, "users"), where("mobile", "==", input));
 const snap = await getDocs(q);
 
@@ -102,38 +79,24 @@ try {
 } catch (error) {
     alert("SMS Service Error: " + error.message);
 }
-    // Verify OTP
-    document.getElementById('verify-btn').onclick = () => {
-        const entered = document.getElementById('otp-input').value;
-        if (entered === tempOTP) {
-            document.getElementById('step-otp').classList.add('hidden');
-            document.getElementById('step-new-pass').classList.remove('hidden');
-        } else {
-            alert("Incorrect OTP. Please try again.");
-        }
-    };
 
-    // Update Password in Database
-    document.getElementById('update-btn').onclick = async () => {
-        const newPass = document.getElementById('new-pass').value;
-        const btn = document.getElementById('update-btn');
-
-        if (newPass.length < 6) return alert("Password must be at least 6 characters.");
-
-        try {
-            btn.disabled = true;
-            btn.innerText = "Updating...";
+            // Now send the actual reset email to the identified account
+            await sendPasswordResetEmail(auth, targetEmail);
             
-            const userRef = doc(db, "users", targetDocId);
-            await updateDoc(userRef, { password: newPass });
-            
-            alert("Password updated successfully! You can now login.");
+            alert("Success! A reset link has been sent to the email associated with this account: " + targetEmail);
             window.location.href = "login.html";
-        } catch (e) {
-            alert("Update failed: " + e.message);
+
+        } catch (error) {
+            btn.innerText = "Send Reset Link";
             btn.disabled = false;
+            
+            if (error.code === 'auth/user-not-found' || error.message.includes("not registered")) {
+                alert("Account not found. Please check your details.");
+            } else {
+                alert("Error: " + error.message);
+            }
         }
-    };
+    });
   </script>
 </body>
 </html>

@@ -68,9 +68,9 @@
       'size': 'invisible'
     });
 
-    // --- SEND LOGIC ---
+   // --- SEND LOGIC ---
     document.getElementById('send-btn').onclick = async () => {
-        const input = document.getElementById('user-id-input').value.trim();
+        let input = document.getElementById('user-id-input').value.trim();
         const btn = document.getElementById('send-btn');
         
         if (!input) return alert("Please enter your registered email or phone.");
@@ -86,6 +86,15 @@
                 window.location.href = "login.html";
             } else {
                 // MOBILE PATH (Firebase Auth)
+                
+                // --- FIX: Ensure E.164 Format ---
+                // If the number doesn't start with '+', assume it's an Indian number (+91)
+                let formattedPhone = input;
+                if (!input.startsWith('+')) {
+                    formattedPhone = "+91" + input;
+                }
+
+                // Query Firestore using the raw input (as stored in your DB)
                 const q = query(collection(db, "users"), where("mobile", "==", input));
                 const snap = await getDocs(q);
 
@@ -93,15 +102,16 @@
                 
                 snap.forEach(d => { targetDocId = d.id; });
 
-                // Firebase sends the SMS
+                // Firebase sends the SMS using the formattedPhone
                 const appVerifier = window.recaptchaVerifier;
-                confirmationResult = await signInWithPhoneNumber(auth, input, appVerifier);
+                confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
                 
-                alert("OTP sent via Firebase!");
+                alert("OTP sent to " + formattedPhone);
                 document.getElementById('step-1').classList.add('hidden');
                 document.getElementById('step-otp').classList.remove('hidden');
             }
         } catch (e) {
+            console.error(e);
             alert("Error: " + e.message);
             btn.disabled = false;
             btn.innerText = "Send Reset Info";

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reset Password | Home Assist</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -10,93 +11,126 @@
     .auth-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
     h2 { color: var(--primary); text-align: center; margin-bottom: 10px; }
     p { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; line-height: 1.5; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none; }
     button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-    button:disabled { background: #94a3b8; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    .hidden { display: none; }
     .link-text { display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #2563eb; text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="auth-card">
     <h2>Reset Password</h2>
-    <p>Enter your <b>Email</b> or <b>Registered Mobile Number</b> to receive a reset link.</p>
     
-    <input type="text" id="user-identifier" placeholder="Email or Mobile (+91...)" required>
-    
-    <button id="reset-btn">Send Reset Link</button>
+    <div id="step-1">
+      <p>Enter your <b>Email</b> for a reset link or <b>Mobile Number</b> for an OTP.</p>
+      <input type="text" id="user-id-input" placeholder="Email or Mobile (+91...)">
+      <button id="send-btn">Send Reset Info</button>
+    </div>
+
+    <div id="step-otp" class="hidden">
+      <p>Enter the 4-digit OTP sent to your phone.</p>
+      <input type="text" id="otp-input" placeholder="Enter 4-Digit OTP" maxlength="4">
+      <button id="verify-btn">Verify OTP</button>
+    </div>
+
+    <div id="step-new-pass" class="hidden">
+      <p>Create a new password for your account.</p>
+      <input type="password" id="new-pass" placeholder="New Password (min. 6 chars)">
+      <button id="update-btn">Update Password</button>
+    </div>
+
     <a href="login.html" class="link-text">Back to Login</a>
   </div>
 
   <script type="module">
     import { auth, db } from "./firebase.js";
     import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    document.getElementById('reset-btn').addEventListener('click', async () => {
-        const input = document.getElementById('user-identifier').value.trim();
-        const btn = document.getElementById('reset-btn');
+    // Global variables for the session
+    let tempOTP = "";
+    let targetDocId = ""; 
 
-        if (!input) {
-            alert("Please enter your email or mobile number.");
-            return;
-        }
+    // --- STEP 1: Identification & Sending ---
+    document.getElementById('send-btn').onclick = async () => {
+        const input = document.getElementById('user-id-input').value.trim();
+        const btn = document.getElementById('send-btn');
+        
+        if (!input) return alert("Please enter your registered email or phone.");
 
         try {
-            btn.innerText = "Verifying...";
             btn.disabled = true;
+            btn.innerText = "Checking...";
 
-            let targetEmail = input;
-
-          // --- MOBILE LOGIC (Updated for Real SMS) ---
-const q = query(collection(db, "users"), where("mobile", "==", input));
-const snap = await getDocs(q);
-
-if (snap.empty) {
-    throw new Error("This mobile number is not registered.");
-}
-
-snap.forEach(d => { targetDocId = d.id; });
-
-// 1. Generate the 4-digit OTP
-tempOTP = Math.floor(1000 + Math.random() * 9000).toString();
-
-// 2. Send the OTP via SMS Gateway API
-const apiKey = "wMPi7ayWTtnckACHoBGY1r8qgSdsJKvlzU6hQN3Fj5Ef9RXDeZXgGFxm63ESebRWBP4t5Q2hAruyfovI"; // Get this from fast2sms.com
-const message = `Your Home Assist verification code is: ${tempOTP}`;
-const mobileNumber = input;
-
-try {
-    const response = await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=otp&variables_values=${tempOTP}&numbers=${mobileNumber}`);
-    const data = await response.json();
-    
-    if (data.return) {
-        alert("OTP sent successfully to your mobile!");
-        document.getElementById('step-1').classList.add('hidden');
-        document.getElementById('step-otp').classList.remove('hidden');
-    } else {
-        throw new Error("SMS failed to send. Please try again later.");
-    }
-} catch (error) {
-    alert("SMS Service Error: " + error.message);
-}
-
-            // Now send the actual reset email to the identified account
-            await sendPasswordResetEmail(auth, targetEmail);
-            
-            alert("Success! A reset link has been sent to the email associated with this account: " + targetEmail);
-            window.location.href = "login.html";
-
-        } catch (error) {
-            btn.innerText = "Send Reset Link";
-            btn.disabled = false;
-            
-            if (error.code === 'auth/user-not-found' || error.message.includes("not registered")) {
-                alert("Account not found. Please check your details.");
+            if (input.includes('@')) {
+                // Email Path
+                await sendPasswordResetEmail(auth, input);
+                alert("Success! Check your email for the reset link.");
+                window.location.href = "login.html";
             } else {
-                alert("Error: " + error.message);
+                // Mobile Path
+                const q = query(collection(db, "users"), where("mobile", "==", input));
+                const snap = await getDocs(q);
+
+                if (snap.empty) {
+                    throw new Error("This mobile number is not registered.");
+                }
+
+                snap.forEach(d => { 
+                    targetDocId = d.id; 
+                });
+                
+                tempOTP = Math.floor(1000 + Math.random() * 9000).toString();
+                
+                // Real-world: Connect SMS API here. 
+                // For now, we use alert to show the code.
+                alert("Your secure OTP is: " + tempOTP);
+                
+                document.getElementById('step-1').classList.add('hidden');
+                document.getElementById('step-otp').classList.remove('hidden');
             }
+        } catch (e) {
+            alert("Error: " + e.message);
+            btn.disabled = false;
+            btn.innerText = "Send Reset Info";
         }
-    });
+    };
+
+    // --- STEP 2: Verification ---
+    document.getElementById('verify-btn').onclick = () => {
+        const entered = document.getElementById('otp-input').value;
+        if (entered === tempOTP && tempOTP !== "") {
+            document.getElementById('step-otp').classList.add('hidden');
+            document.getElementById('step-new-pass').classList.remove('hidden');
+        } else {
+            alert("Incorrect OTP. Please try again.");
+        }
+    };
+
+    // --- STEP 3: Update Database ---
+    document.getElementById('update-btn').onclick = async () => {
+        const newPass = document.getElementById('new-pass').value;
+        const btn = document.getElementById('update-btn');
+
+        if (newPass.length < 6) return alert("Password must be at least 6 characters.");
+        if (!targetDocId) return alert("Session expired. Please start again.");
+
+        try {
+            btn.disabled = true;
+            btn.innerText = "Updating...";
+            
+            const userRef = doc(db, "users", targetDocId);
+            await updateDoc(userRef, { password: newPass });
+            
+            alert("Password updated successfully! You can now login.");
+            window.location.href = "login.html";
+        } catch (e) {
+            alert("Update failed: " + e.message);
+            btn.disabled = false;
+            btn.innerText = "Update Password";
+        }
+    };
   </script>
 </body>
 </html>

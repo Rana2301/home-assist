@@ -11,155 +11,96 @@
     .auth-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
     h2 { color: var(--primary); text-align: center; margin-bottom: 10px; }
     p { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; line-height: 1.5; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none; }
+    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
     button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.3s; }
     button:disabled { background: #94a3b8; cursor: not-allowed; }
     .hidden { display: none; }
+    .password-container { position: relative; width: 100%; }
+    .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #64748b; }
     .link-text { display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #2563eb; text-decoration: none; }
   </style>
 </head>
 <body>
-
   <div class="auth-card">
     <h2>Reset Password</h2>
-    
     <div id="step-1">
-      <p>Enter your <b>Email</b> for a reset link or <b>Mobile Number</b> for an OTP.</p>
+      <p>Enter your <b>Email</b> or <b>Mobile Number</b>.</p>
       <input type="text" id="user-id-input" placeholder="Email or Mobile (+91...)">
       <button id="send-btn">Send Reset Info</button>
     </div>
-
     <div id="step-otp" class="hidden">
       <p>Enter the 6-digit OTP sent to your phone.</p>
       <input type="text" id="otp-input" placeholder="Enter 6-Digit OTP" maxlength="6">
       <button id="verify-btn">Verify OTP</button>
     </div>
-
     <div id="step-new-pass" class="hidden">
       <p>Create a new password for your account.</p>
-      <input type="password" id="new-pass" placeholder="New Password (min. 6 chars)">
+      <div class="password-container">
+        <input type="password" id="new-pass" placeholder="New Password (min. 6 chars)">
+        <span class="toggle-password" id="toggle-new-pass">👁️</span>
+      </div>
       <button id="update-btn">Update Password</button>
     </div>
-
     <a href="login.html" class="link-text">Back to Login</a>
   </div>
 
   <script type="module">
     import { auth, db } from "./firebase.js";
-    import { 
-        sendPasswordResetEmail, 
-        RecaptchaVerifier, 
-        signInWithPhoneNumber 
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { 
-        collection, 
-        query, 
-        where, 
-        getDocs, 
-        updateDoc, 
-        doc 
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { sendPasswordResetEmail, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     let confirmationResult = null;
     let targetDocId = "";
 
-    // Initialize hidden reCAPTCHA
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'send-btn', {
-      'size': 'invisible'
-    });
+    // Toggle function specifically for this script scope
+    document.getElementById('toggle-new-pass').onclick = () => {
+      const input = document.getElementById('new-pass');
+      input.type = input.type === "password" ? "text" : "password";
+    };
 
-   // --- SEND LOGIC ---
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'send-btn', { 'size': 'invisible' });
+
     document.getElementById('send-btn').onclick = async () => {
         let input = document.getElementById('user-id-input').value.trim();
         const btn = document.getElementById('send-btn');
-        
-        if (!input) return alert("Please enter your registered email or phone.");
-
+        if (!input) return alert("Please enter email or phone.");
         try {
             btn.disabled = true;
-            btn.innerText = "Processing...";
-
             if (input.includes('@')) {
-                // EMAIL PATH
                 await sendPasswordResetEmail(auth, input);
-                alert("Success! Check your email for the reset link.");
+                alert("Reset link sent to your email!");
                 window.location.href = "login.html";
             } else {
-                // MOBILE PATH (Firebase Auth)
-                
-                // --- FIX: Ensure E.164 Format ---
-                // If the number doesn't start with '+', assume it's an Indian number (+91)
-                let formattedPhone = input;
-                if (!input.startsWith('+')) {
-                    formattedPhone = "+91" + input;
-                }
-
-                // Query Firestore using the raw input (as stored in your DB)
+                let formattedPhone = input.startsWith('+') ? input : "+91" + input;
                 const q = query(collection(db, "users"), where("mobile", "==", input));
                 const snap = await getDocs(q);
-
                 if (snap.empty) throw new Error("This mobile number is not registered.");
-                
                 snap.forEach(d => { targetDocId = d.id; });
-
-                // Firebase sends the SMS using the formattedPhone
-                const appVerifier = window.recaptchaVerifier;
-                confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
-                
-                alert("OTP sent to " + formattedPhone);
+                confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
                 document.getElementById('step-1').classList.add('hidden');
                 document.getElementById('step-otp').classList.remove('hidden');
             }
-        } catch (e) {
-            console.error(e);
-            alert("Error: " + e.message);
-            btn.disabled = false;
-            btn.innerText = "Send Reset Info";
-        }
+        } catch (e) { alert(e.message); btn.disabled = false; }
     };
 
-    // --- VERIFY OTP LOGIC ---
     document.getElementById('verify-btn').onclick = async () => {
         const code = document.getElementById('otp-input').value;
-        const btn = document.getElementById('verify-btn');
-        
         try {
-            btn.disabled = true;
-            // Verify the code with Firebase
             await confirmationResult.confirm(code);
-            
             document.getElementById('step-otp').classList.add('hidden');
             document.getElementById('step-new-pass').classList.remove('hidden');
-        } catch (e) {
-            alert("Invalid OTP. Please try again.");
-            btn.disabled = false;
-        }
+        } catch (e) { alert("Invalid OTP."); }
     };
 
-    // --- UPDATE PASSWORD LOGIC ---
     document.getElementById('update-btn').onclick = async () => {
         const newPass = document.getElementById('new-pass').value;
-        const btn = document.getElementById('update-btn');
-
-        if (newPass.length < 6) return alert("Password must be at least 6 characters.");
-        if (!targetDocId) return alert("Session expired. Please start again.");
-
+        if (newPass.length < 6) return alert("Min 6 characters required.");
         try {
-            btn.disabled = true;
-            btn.innerText = "Updating...";
-            
-            const userRef = doc(db, "users", targetDocId);
-            await updateDoc(userRef, { password: newPass });
-            
-            alert("Password updated successfully! You can now login.");
+            await updateDoc(doc(db, "users", targetDocId), { password: newPass });
+            alert("Password updated!");
             window.location.href = "login.html";
-        } catch (e) {
-            alert("Update failed: " + e.message);
-            btn.disabled = false;
-            btn.innerText = "Update Password";
-        }
+        } catch (e) { alert("Update failed."); }
     };
   </script>
-
 </body>
 </html>

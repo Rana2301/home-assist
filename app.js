@@ -1,53 +1,68 @@
 import { auth, db } from "./firebase.js";
-import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-window.handleSignup = async function() {
-    const name = document.getElementById('full-name').value;
-    const email = document.getElementById('sign-email').value;
-    const mobile = document.getElementById('mobile').value;
+// --- TOGGLE PASSWORD VISIBILITY ---
+window.togglePassword = (id) => {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+};
+
+// --- SIGNUP HANDLER ---
+window.handleSignup = async () => {
+    const email = document.getElementById('sign-email').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
     const pass = document.getElementById('sign-pass').value;
     const confirm = document.getElementById('confirm-pass').value;
+    const name = document.getElementById('full-name').value.trim();
 
-    if (!name || !email || !mobile || !pass) return alert("Please fill all fields.");
-    if (pass !== confirm) return alert("Passwords do not match.");
-
-    const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,}$/;
-    if (!passRegex.test(pass)) {
-        return alert("Password must have at least 6 characters, one uppercase, one lowercase, and one special character.");
-    }
+    if (pass !== confirm) return alert("Passwords do not match!");
 
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-        const user = userCredential.user;
-
-        await updateProfile(user, { displayName: name });
-
-        await setDoc(doc(db, "users", user.uid), {
+        // Save user record to allow mobile login lookup later
+        await addDoc(collection(db, "users"), {
+            uid: userCredential.user.uid,
             fullName: name,
             email: email,
             mobile: mobile,
-            registeredAt: new Date().toISOString()
+            password: pass 
         });
-
-        alert("Account Created! Now please login.");
+        alert("Account created successfully!");
         window.location.href = "login.html";
-    } catch (error) {
-        alert("Signup failed: " + error.message);
+    } catch (e) {
+        alert("Error: " + e.message);
     }
 };
 
-window.handleLogin = async function() {
-    const email = document.getElementById('login-email').value;
+// --- LOGIN HANDLER (Dual Email/Mobile Support) ---
+window.handleLogin = async () => {
+    const input = document.getElementById('login-identifier').value.trim();
     const pass = document.getElementById('login-pass').value;
-
-    if (!email || !pass) return alert("Please enter both email and password.");
+    let loginEmail = input;
 
     try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        alert("Login Successful!");
-        window.location.href = "index.html";
-    } catch (error) {
-        alert("Login failed: " + error.message);
+        // If it's a mobile number, find the linked email first
+        if (!input.includes('@')) {
+            const q = query(collection(db, "users"), where("mobile", "==", input));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) {
+                return alert("You have not registered; please sign up first.");
+            }
+            snap.forEach(doc => { loginEmail = doc.data().email; });
+        }
+
+        // Firebase Auth login
+        await signInWithEmailAndPassword(auth, loginEmail, pass);
+        alert("Welcome back!");
+        window.location.href = "index.html"; 
+        
+    } catch (e) {
+        if (e.code === 'auth/user-not-found') {
+            alert("You have not registered; please sign up first.");
+        } else {
+            alert("Login error: " + e.message);
+        }
     }
 };

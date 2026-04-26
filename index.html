@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="icon" type="image/png" href="favicon.png.png"> 
+  
   <title>Home Assist | Trusted Home Services</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
       --primary: #2563eb;
@@ -15,7 +19,6 @@
 
     body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; overflow-x: hidden; }
     
-    /* FIX: Navigation Bar Mobile Correction */
     .navbar { 
       background: var(--glass); 
       backdrop-filter: blur(10px); 
@@ -34,10 +37,27 @@
       margin: 0 auto;
     }
 
-    .logo { font-size: 20px; font-weight: 700; color: var(--primary); text-decoration: none; }
+    /* FIX: Styling for the Logo and Title container */
+    .logo-container {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 12px; /* Space between logo and text */
+    }
+
+    .logo-img {
+      width: 40px; /* Adjust size as needed */
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .logo-text { 
+      font-size: 20px; 
+      font-weight: 700; 
+      color: var(--primary); 
+    }
 
     .nav-links { display: flex; align-items: center; gap: 15px; }
-    
     .nav-links a { text-decoration: none; color: #64748b; font-size: 14px; font-weight: 500; }
 
     .btn-login {
@@ -48,7 +68,10 @@
       transition: 0.3s;
     }
 
-    /* FIX: Hero Section & Search Bar Responsiveness */
+    @media (min-width: 768px) {
+      .logo-text { font-size: 24px; }
+    }
+
     .hero {
       background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
       color: white; padding: 80px 20px; text-align: center;
@@ -63,7 +86,6 @@
 
     @media (min-width: 768px) {
       .search-container { flex-direction: row; border-radius: 50px; padding: 10px 20px; }
-      .logo { font-size: 24px; }
     }
 
     .search-container input {
@@ -100,7 +122,11 @@
 <body>
   <header class="navbar">
     <div class="nav-container">
-      <a href="#" class="logo">Home Assist</a>
+      <a href="index.html" class="logo-container">
+        <img src="logo.png.png" alt="Home Assist Logo" class="logo-img">
+        <span class="logo-text">Home Assist</span>
+      </a>
+
       <nav class="nav-links">
         <a href="#services">Services</a>
         <a href="login.html" class="btn-login">Login</a>

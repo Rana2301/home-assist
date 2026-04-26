@@ -1,18 +1,43 @@
-<h1>Admin Dashboard</h1>
-<div id="bookings"></div>
+<!DOCTYPE html>
+<html>
+<head><title>Admin Dashboard</title></head>
+<body style="font-family: sans-serif; padding: 20px;">
+    <h1>Admin Dashboard - Active Bookings</h1>
+    <div id="bookings" style="background: #fff; border: 1px solid #ddd; padding: 20px;">
+        <p>Loading bookings...</p>
+    </div>
 
 <script type="module">
 import { db } from "./firebase.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 async function loadBookings() {
-  const snap = await getDocs(collection(db, "bookings"));
-  snap.forEach(doc => {
-    document.getElementById("bookings").innerHTML += `
-      <p>${doc.data().serviceType} - ${doc.data().status}</p>
-    `;
-  });
+  const bookingsDiv = document.getElementById("bookings");
+  try {
+    const q = query(collection(db, "bookings"), orderBy("time", "desc"));
+    const snap = await getDocs(q);
+    
+    if (snap.empty) {
+        bookingsDiv.innerHTML = "<p>No bookings found.</p>";
+        return;
+    }
+
+    bookingsDiv.innerHTML = ""; // Clear loader
+    snap.forEach(doc => {
+      const data = doc.data();
+      bookingsDiv.innerHTML += `
+        <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+            <strong>${data.serviceType}</strong> - <span style="color: blue;">${data.status}</span><br>
+            <small>Location: ${data.location} | Date: ${new Date(data.time).toLocaleString()}</small>
+        </div>
+      `;
+    });
+  } catch (e) {
+    bookingsDiv.innerHTML = "Error loading bookings: " + e.message;
+  }
 }
 
 loadBookings();
 </script>
+</body>
+</html>

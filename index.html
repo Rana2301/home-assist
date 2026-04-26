@@ -1,9 +1,161 @@
-<h1>Home Assist Services</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Assist | Trusted Home Services</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Instant UI Enhancements */
+    :root {
+      --primary: #2563eb;
+      --secondary: #3b82f6;
+      --accent: #f59e0b;
+      --glass: rgba(255, 255, 255, 0.9);
+    }
 
-<button onclick="bookService('plumber')">Book Plumber</button>
-<button onclick="bookService('electrician')">Book Electrician</button>
-<button onclick="bookService('cleaning')">Book Cleaning</button>
+    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; }
+    
+    .navbar { 
+      background: var(--glass); backdrop-filter: blur(10px); 
+      position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0;
+    }
 
-<div id="services"></div>
+    .hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white; padding: 100px 20px; text-align: center;
+      clip-path: ellipse(150% 100% at 50% 0%);
+    }
 
-<script type="module" src="app.js"></script>
+    .search-container {
+      background: var(--glass); padding: 20px; border-radius: 50px;
+      display: inline-flex; gap: 10px; margin-top: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 700px;
+    }
+
+    .search-container input {
+      border: none; padding: 12px 20px; border-radius: 30px; width: 100%; outline: none;
+    }
+
+    .grid-container {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px; padding: 50px 20px; max-width: 1200px; margin: auto;
+    }
+
+    .card {
+      background: white; border-radius: 20px; padding: 30px; text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .card:hover { transform: translateY(-15px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+
+    .btn-book {
+      background: var(--primary); color: white; border: none; padding: 12px 30px;
+      border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s;
+    }
+
+    .btn-book:hover { background: #1d4ed8; letter-spacing: 1px; }
+
+    /* Animations */
+    .fade-up { animation: fadeUp 0.8s ease-out; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 50px;">
+      <a href="#" class="logo" style="font-size: 24px; font-weight: 700; color: var(--primary); text-decoration: none;">Home Assist</a>
+      <nav class="nav-links">
+        <a href="#services" style="margin-right: 20px; text-decoration: none; color: #64748b;">Services</a>
+        <a href="login.html" class="btn-book" style="text-decoration: none;">Login / Signup</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero fade-up">
+      <div class="container">
+        <p style="text-transform: uppercase; letter-spacing: 2px; color: #93c5fd; font-weight: 600;">Trusted Home Experts</p>
+        <h1 style="font-size: 3rem; margin: 10px 0;">घर की हर ज़रूरत, अब एक ही जगह</h1>
+        <p style="font-size: 1.2rem; opacity: 0.9;">Plumber, Electrician, Cleaning and more at your doorstep.</p>
+
+        <div class="search-container">
+          <input type="text" id="service" placeholder="Which service do you need?">
+          <input type="text" id="location" placeholder="Your Location">
+          <button class="btn-book" onclick="searchService()">Search</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="container" style="text-align: center; padding-top: 50px;">
+        <h2 style="font-size: 2rem;">Popular Services</h2>
+        <div class="grid-container">
+          <div class="card">
+            <div style="font-size: 50px;">🚰</div>
+            <h3>Plumbing Services</h3>
+            <p style="color: #64748b;">Leaking pipes? Blocked drains? We fix it all.</p>
+            <button class="btn-book" onclick="bookService('Plumber')">Book Now</button>
+          </div>
+          <div class="card">
+            <div style="font-size: 50px;">⚡</div>
+            <h3>Electrical Work</h3>
+            <p style="color: #64748b;">Wiring, socket repairs, and fan installation.</p>
+            <button class="btn-book" onclick="bookService('Electrician')">Book Now</button>
+          </div>
+          <div class="card">
+            <div style="font-size: 50px;">❄️</div>
+            <h3>AC Repair</h3>
+            <p style="color: #64748b;">Maintenance, gas refilling, and deep cleaning.</p>
+            <button class="btn-book" onclick="bookService('AC Repair')">Book Now</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="recaptcha-container"></div>
+
+  <script type="module">
+    import { db, auth } from "./firebase.js";
+    import { addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Combine your Search logic with functionality
+    window.searchService = function() {
+        const query = document.getElementById('service').value;
+        if(query) {
+            alert("Searching for professionals in " + query + "...");
+        }
+    };
+
+    window.bookService = async function(type) {
+        const user = auth.currentUser;
+        if(!user) {
+            alert("Please login first to confirm your booking.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, "bookings"), {
+                userId: user.uid,
+                serviceType: type,
+                status: "pending",
+                time: Date.now(),
+                location: document.getElementById('location').value || "Not specified"
+            });
+            alert("🎉 Booking Confirmed for " + type + "!");
+        } catch (e) {
+            alert("Booking Failed: " + e.message);
+        }
+    };
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

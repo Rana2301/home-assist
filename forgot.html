@@ -30,8 +30,8 @@
     </div>
 
     <div id="step-otp" class="hidden">
-      <p>Enter the 4-digit OTP sent to your phone.</p>
-      <input type="text" id="otp-input" placeholder="Enter 4-Digit OTP" maxlength="4">
+      <p>Enter the 6-digit OTP sent to your phone.</p>
+      <input type="text" id="otp-input" placeholder="Enter 6-Digit OTP" maxlength="6">
       <button id="verify-btn">Verify OTP</button>
     </div>
 
@@ -46,11 +46,27 @@
 
   <script type="module">
     import { auth, db } from "./firebase.js";
-    import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { 
+        sendPasswordResetEmail, 
+        RecaptchaVerifier, 
+        signInWithPhoneNumber 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { 
+        collection, 
+        query, 
+        where, 
+        getDocs, 
+        updateDoc, 
+        doc 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    let tempOTP = "";
-    let targetDocId = ""; 
+    let confirmationResult = null;
+    let targetDocId = "";
+
+    // Initialize hidden reCAPTCHA
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'send-btn', {
+      'size': 'invisible'
+    });
 
     // --- SEND LOGIC ---
     document.getElementById('send-btn').onclick = async () => {
@@ -61,7 +77,7 @@
 
         try {
             btn.disabled = true;
-            btn.innerText = "Checking...";
+            btn.innerText = "Processing...";
 
             if (input.includes('@')) {
                 // EMAIL PATH
@@ -69,31 +85,21 @@
                 alert("Success! Check your email for the reset link.");
                 window.location.href = "login.html";
             } else {
-                // MOBILE PATH (Fast2SMS Integration)
+                // MOBILE PATH (Firebase Auth)
                 const q = query(collection(db, "users"), where("mobile", "==", input));
                 const snap = await getDocs(q);
 
-                if (snap.empty) {
-                    throw new Error("This mobile number is not registered.");
-                }
-
-                snap.forEach(d => { targetDocId = d.id; });
+                if (snap.empty) throw new Error("This mobile number is not registered.");
                 
-                // Generate 4-digit OTP
-                tempOTP = Math.floor(1000 + Math.random() * 9000).toString();
+                snap.forEach(d => { targetDocId = d.id; });
 
-                // Fast2SMS API Call
-                const apiKey = "wMPi7ayWTtnckACHoBGY1r8qgSdsJKvlzU6hQN3Fj5Ef9RXDeZXgGFxm63ESebRWBP4t5Q2hAruyfovI";
-                const response = await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=otp&variables_values=${tempOTP}&numbers=${input}`);
-                const data = await response.json();
-
-                if (data.return) {
-                    alert("OTP sent successfully to your mobile!");
-                    document.getElementById('step-1').classList.add('hidden');
-                    document.getElementById('step-otp').classList.remove('hidden');
-                } else {
-                    throw new Error("Failed to send SMS. Please check your Fast2SMS API balance or settings.");
-                }
+                // Firebase sends the SMS
+                const appVerifier = window.recaptchaVerifier;
+                confirmationResult = await signInWithPhoneNumber(auth, input, appVerifier);
+                
+                alert("OTP sent via Firebase!");
+                document.getElementById('step-1').classList.add('hidden');
+                document.getElementById('step-otp').classList.remove('hidden');
             }
         } catch (e) {
             alert("Error: " + e.message);
@@ -103,13 +109,20 @@
     };
 
     // --- VERIFY OTP LOGIC ---
-    document.getElementById('verify-btn').onclick = () => {
-        const entered = document.getElementById('otp-input').value;
-        if (entered === tempOTP && tempOTP !== "") {
+    document.getElementById('verify-btn').onclick = async () => {
+        const code = document.getElementById('otp-input').value;
+        const btn = document.getElementById('verify-btn');
+        
+        try {
+            btn.disabled = true;
+            // Verify the code with Firebase
+            await confirmationResult.confirm(code);
+            
             document.getElementById('step-otp').classList.add('hidden');
             document.getElementById('step-new-pass').classList.remove('hidden');
-        } else {
-            alert("Incorrect OTP. Please try again.");
+        } catch (e) {
+            alert("Invalid OTP. Please try again.");
+            btn.disabled = false;
         }
     };
 

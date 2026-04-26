@@ -70,32 +70,38 @@
                 alert("Success! Check your email for the reset link.");
                 window.location.href = "login.html";
             } else {
-                // MOBILE FLOW: Custom OTP logic
-                const q = query(collection(db, "users"), where("mobile", "==", input));
-                const snap = await getDocs(q);
+               // --- MOBILE LOGIC (Updated for Real SMS) ---
+const q = query(collection(db, "users"), where("mobile", "==", input));
+const snap = await getDocs(q);
 
-                if (snap.empty) {
-                    throw new Error("This mobile number is not registered.");
-                }
+if (snap.empty) {
+    throw new Error("This mobile number is not registered.");
+}
 
-                snap.forEach(d => { targetDocId = d.id; });
-                
-                // Generate a random 4-digit OTP
-                tempOTP = Math.floor(1000 + Math.random() * 9000).toString();
-                
-                // In a real app, you'd trigger an SMS API here. For now:
-                alert("Your secure OTP is: " + tempOTP);
-                
-                document.getElementById('step-1').classList.add('hidden');
-                document.getElementById('step-otp').classList.remove('hidden');
-            }
-        } catch (e) {
-            alert(e.message);
-            btn.disabled = false;
-            btn.innerText = "Send Reset Info";
-        }
-    };
+snap.forEach(d => { targetDocId = d.id; });
 
+// 1. Generate the 4-digit OTP
+tempOTP = Math.floor(1000 + Math.random() * 9000).toString();
+
+// 2. Send the OTP via SMS Gateway API
+const apiKey = "YOUR_FAST2SMS_API_KEY"; // Get this from fast2sms.com
+const message = `Your Home Assist verification code is: ${tempOTP}`;
+const mobileNumber = input;
+
+try {
+    const response = await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=otp&variables_values=${tempOTP}&numbers=${mobileNumber}`);
+    const data = await response.json();
+    
+    if (data.return) {
+        alert("OTP sent successfully to your mobile!");
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-otp').classList.remove('hidden');
+    } else {
+        throw new Error("SMS failed to send. Please try again later.");
+    }
+} catch (error) {
+    alert("SMS Service Error: " + error.message);
+}
     // Verify OTP
     document.getElementById('verify-btn').onclick = () => {
         const entered = document.getElementById('otp-input').value;

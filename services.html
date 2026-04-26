@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Services | Home Assist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #2563eb; --bg: #f8fafc; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .header h1 { color: var(--primary); margin-bottom: 5px; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+    .service-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: 0.3s; border: 1px solid #e2e8f0; }
+    .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .tag { background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .price { font-size: 1.2rem; font-weight: 700; color: #1e293b; margin: 15px 0; }
+    .btn-book { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary); text-decoration: none; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <a href="index.html" class="back-link">← Back to Home</a>
+    <div class="header">
+      <h1>Available Services</h1>
+      <p id="search-status">Showing all available experts</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <span class="tag">Plumbing</span>
+        <h3>Professional Pipe Repair</h3>
+        <p>Expert fix for leakages, blockages, and tap installations.</p>
+        <div class="price">Starting at ₹199</div>
+        <button class="btn-book" onclick="bookNow('Plumber')">Book Now</button>
+      </div>
+
+      <div class="service-card">
+        <span class="tag">Electrical</span>
+        <h3>Electrical Maintenance</h3>
+        <p>Short circuit repairs, wiring, and appliance installation.</p>
+        <div class="price">Starting at ₹249</div>
+        <button class="btn-book" onclick="bookNow('Electrician')">Book Now</button>
+      </div>
+
+      <div class="service-card">
+        <span class="tag">Cooling</span>
+        <h3>AC Service & Repair</h3>
+        <p>Deep cleaning, gas refilling, and troubleshooting.</p>
+        <div class="price">Starting at ₹499</div>
+        <button class="btn-book" onclick="bookNow('AC Repair')">Book Now</button>
+      </div>
+
+      <div class="service-card">
+        <span class="tag">Cleaning</span>
+        <h3>Full House Deep Cleaning</h3>
+        <p>Sanitization and deep cleaning for all rooms.</p>
+        <div class="price">Starting at ₹999</div>
+        <button class="btn-book" onclick="bookNow('Cleaning')">Book Now</button>
+      </div>
+    </div>
+  </div>
+
+ <script type="module">
+  import { auth } from "./firebase.js";
+
+  window.bookNow = function(serviceName) {
+      const user = auth.currentUser;
+      
+      if (!user) {
+          alert("Please login first to book a service.");
+          window.location.href = "login.html";
+          return;
+      }
+
+      const prices = {
+          'Plumber': '199',
+          'Electrician': '249',
+          'AC Repair': '499',
+          'Cleaning': '999'
+      };
+
+      const selectedPrice = prices[serviceName] || "0";
+      const serviceParam = encodeURIComponent(serviceName);
+      window.location.assign(`payment.html?service=${serviceParam}&price=${selectedPrice}`);
+  };
+ </script>
+</body>
+</html>

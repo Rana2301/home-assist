@@ -9,78 +9,106 @@
     body { font-family: 'Poppins', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
     .auth-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
     h2 { color: var(--primary); text-align: center; margin-bottom: 10px; }
-    p { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; line-height: 1.5; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
-    button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-    button:disabled { background: #94a3b8; }
+    p { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; }
+    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+    .hidden { display: none; }
     .link-text { display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #2563eb; text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="auth-card">
-    <h2>Reset Password</h2>
-    <p>Enter your <b>Email</b> or <b>Registered Mobile Number</b> to receive a reset link.</p>
+    <h2 id="title">Reset Password</h2>
     
-    <input type="text" id="user-identifier" placeholder="Email or Mobile (+91...)" required>
-    
-    <button id="reset-btn">Send Reset Link</button>
+    <div id="step-1">
+      <p>Enter your <b>Email</b> for a link or <b>Mobile</b> for an OTP.</p>
+      <input type="text" id="user-input" placeholder="Email or Mobile (+91...)">
+      <button id="send-btn">Send Reset Info</button>
+    </div>
+
+    <div id="step-otp" class="hidden">
+      <p>Enter the 4-digit OTP sent to your phone.</p>
+      <input type="text" id="otp-input" placeholder="0000" maxlength="4">
+      <button id="verify-btn">Verify OTP</button>
+    </div>
+
+    <div id="step-new-pass" class="hidden">
+      <p>Create a new password for your account.</p>
+      <input type="password" id="new-pass" placeholder="New Password">
+      <button id="update-btn">Update Password</button>
+    </div>
+
     <a href="login.html" class="link-text">Back to Login</a>
   </div>
 
   <script type="module">
     import { auth, db } from "./firebase.js";
     import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    document.getElementById('reset-btn').addEventListener('click', async () => {
-        const input = document.getElementById('user-identifier').value.trim();
-        const btn = document.getElementById('reset-btn');
+    let generatedOTP = "";
+    let userDocId = "";
 
-        if (!input) {
-            alert("Please enter your email or mobile number.");
-            return;
-        }
+    document.getElementById('send-btn').addEventListener('click', async () => {
+        const input = document.getElementById('user-input').value.trim();
+        const sendBtn = document.getElementById('send-btn');
+
+        if (!input) return alert("Please enter details.");
 
         try {
-            btn.innerText = "Verifying...";
-            btn.disabled = true;
-
-            let targetEmail = input;
-
-            // Logic: Check if input is a Phone Number (doesn't contain @)
-            if (!input.includes('@')) {
-                // Search Firestore to find the email linked to this mobile number
-                const usersRef = collection(db, "users");
-                const q = query(usersRef, where("mobile", "==", input));
-                const querySnapshot = await getDocs(q);
-
-                if (querySnapshot.empty) {
-                    throw new Error("This mobile number is not registered.");
-                }
-
-                // Get the email from the first matching document
-                querySnapshot.forEach((doc) => {
-                    targetEmail = doc.data().email;
-                });
-                
-                console.log("Found linked email: " + targetEmail);
-            }
-
-            // Now send the actual reset email to the identified account
-            await sendPasswordResetEmail(auth, targetEmail);
+            sendBtn.innerText = "Processing...";
             
-            alert("Success! A reset link has been sent to the email associated with this account: " + targetEmail);
-            window.location.href = "login.html";
-
-        } catch (error) {
-            btn.innerText = "Send Reset Link";
-            btn.disabled = false;
-            
-            if (error.code === 'auth/user-not-found' || error.message.includes("not registered")) {
-                alert("Account not found. Please check your details.");
+            if (input.includes('@')) {
+                // --- EMAIL LOGIC ---
+                await sendPasswordResetEmail(auth, input);
+                alert("Reset link sent to your email!");
+                window.location.href = "login.html";
             } else {
-                alert("Error: " + error.message);
+                // --- MOBILE LOGIC ---
+                const q = query(collection(db, "users"), where("mobile", "==", input));
+                const snap = await getDocs(q);
+
+                if (snap.empty) throw new Error("Mobile number not registered.");
+
+                snap.forEach(d => { userDocId = d.id; });
+
+                // Simulate sending 4-digit OTP
+                generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
+                alert("DEBUG: Your 4-digit OTP is " + generatedOTP); // In production, use an SMS API here
+                
+                document.getElementById('step-1').classList.add('hidden');
+                document.getElementById('step-otp').classList.remove('hidden');
             }
+        } catch (e) {
+            alert(e.message);
+            sendBtn.innerText = "Send Reset Info";
+        }
+    });
+
+    document.getElementById('verify-btn').addEventListener('click', () => {
+        const entered = document.getElementById('otp-input').value;
+        if (entered === generatedOTP) {
+            document.getElementById('step-otp').classList.add('hidden');
+            document.getElementById('step-new-pass').classList.remove('hidden');
+        } else {
+            alert("Invalid OTP. Try again.");
+        }
+    });
+
+    document.getElementById('update-btn').addEventListener('click', async () => {
+        const newPassword = document.getElementById('new-pass').value;
+        if (newPassword.length < 6) return alert("Password too short.");
+
+        try {
+            // Update password in Firestore (Note: This doesn't change Firebase Auth password, 
+            // you'd typically need the user to be logged in for that, but this updates your DB record)
+            const userRef = doc(db, "users", userDocId);
+            await updateDoc(userRef, { password: newPassword });
+            
+            alert("Password updated successfully in database!");
+            window.location.href = "login.html";
+        } catch (e) {
+            alert("Error: " + e.message);
         }
     });
   </script>

@@ -4,39 +4,73 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home Assist | Trusted Home Services</title>
-  <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Instant UI Enhancements */
     :root {
       --primary: #2563eb;
       --secondary: #3b82f6;
       --accent: #f59e0b;
-      --glass: rgba(255, 255, 255, 0.9);
+      --glass: rgba(255, 255, 255, 0.95);
     }
 
-    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; }
+    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; overflow-x: hidden; }
     
+    /* FIX: Navigation Bar Mobile Correction */
     .navbar { 
-      background: var(--glass); backdrop-filter: blur(10px); 
-      position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0;
+      background: var(--glass); 
+      backdrop-filter: blur(10px); 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000; 
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 20px;
     }
 
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo { font-size: 20px; font-weight: 700; color: var(--primary); text-decoration: none; }
+
+    .nav-links { display: flex; align-items: center; gap: 15px; }
+    
+    .nav-links a { text-decoration: none; color: #64748b; font-size: 14px; font-weight: 500; }
+
+    .btn-login {
+      background: var(--primary);
+      color: white !important;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    /* FIX: Hero Section & Search Bar Responsiveness */
     .hero {
       background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      color: white; padding: 100px 20px; text-align: center;
+      color: white; padding: 80px 20px; text-align: center;
       clip-path: ellipse(150% 100% at 50% 0%);
     }
 
     .search-container {
-      background: var(--glass); padding: 20px; border-radius: 50px;
-      display: inline-flex; gap: 10px; margin-top: 30px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 700px;
+      background: white; padding: 10px; border-radius: 15px;
+      display: flex; flex-direction: column; gap: 10px; margin: 30px auto 0;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 600px;
+    }
+
+    @media (min-width: 768px) {
+      .search-container { flex-direction: row; border-radius: 50px; padding: 10px 20px; }
+      .logo { font-size: 24px; }
     }
 
     .search-container input {
-      border: none; padding: 12px 20px; border-radius: 30px; width: 100%; outline: none;
+      border: 1px solid #e2e8f0; padding: 12px 20px; border-radius: 10px; width: 100%; outline: none; color: #1e293b;
     }
+
+    @media (min-width: 768px) { .search-container input { border: none; } }
 
     .grid-container {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -45,23 +79,19 @@
 
     .card {
       background: white; border-radius: 20px; padding: 30px; text-align: center;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      transition: 0.3s; border: 1px solid #f1f5f9;
     }
 
-    .card:hover { transform: translateY(-15px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+    .card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
 
     .btn-book {
       background: var(--primary); color: white; border: none; padding: 12px 30px;
-      border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s;
+      border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%;
     }
 
-    .btn-book:hover { background: #1d4ed8; letter-spacing: 1px; }
-
-    /* Animations */
     .fade-up { animation: fadeUp 0.8s ease-out; }
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
@@ -69,11 +99,11 @@
 
 <body>
   <header class="navbar">
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 50px;">
-      <a href="#" class="logo" style="font-size: 24px; font-weight: 700; color: var(--primary); text-decoration: none;">Home Assist</a>
+    <div class="nav-container">
+      <a href="#" class="logo">Home Assist</a>
       <nav class="nav-links">
-        <a href="#services" style="margin-right: 20px; text-decoration: none; color: #64748b;">Services</a>
-        <a href="login.html" class="btn-book" style="text-decoration: none;">Login / Signup</a>
+        <a href="#services">Services</a>
+        <a href="login.html" class="btn-login">Login</a>
       </nav>
     </div>
   </header>
@@ -81,38 +111,38 @@
   <main>
     <section class="hero fade-up">
       <div class="container">
-        <p style="text-transform: uppercase; letter-spacing: 2px; color: #93c5fd; font-weight: 600;">Trusted Home Experts</p>
-        <h1 style="font-size: 3rem; margin: 10px 0;">घर की हर ज़रूरत, अब एक ही जगह</h1>
-        <p style="font-size: 1.2rem; opacity: 0.9;">Plumber, Electrician, Cleaning and more at your doorstep.</p>
+        <p style="text-transform: uppercase; letter-spacing: 2px; color: #93c5fd; font-weight: 600; font-size: 12px;">Trusted Home Experts</p>
+        <h1 style="font-size: 2.2rem; margin: 10px 0; line-height: 1.2;">घर की हर ज़रूरत, अब एक ही जगह</h1>
+        <p style="font-size: 1rem; opacity: 0.9;">Plumber, Electrician, Cleaning and more.</p>
 
         <div class="search-container">
-          <input type="text" id="service" placeholder="Which service do you need?">
+          <input type="text" id="service" placeholder="Service (e.g. Plumber)">
           <input type="text" id="location" placeholder="Your Location">
-          <button class="btn-book" onclick="searchService()">Search</button>
+          <button class="btn-book" style="width: auto;" onclick="searchService()">Search</button>
         </div>
       </div>
     </section>
 
     <section id="services">
-      <div class="container" style="text-align: center; padding-top: 50px;">
-        <h2 style="font-size: 2rem;">Popular Services</h2>
+      <div class="container" style="text-align: center; padding: 50px 20px;">
+        <h2 style="font-size: 1.8rem;">Popular Services</h2>
         <div class="grid-container">
           <div class="card">
             <div style="font-size: 50px;">🚰</div>
-            <h3>Plumbing Services</h3>
-            <p style="color: #64748b;">Leaking pipes? Blocked drains? We fix it all.</p>
+            <h3>Plumbing</h3>
+            <p style="color: #64748b; font-size: 14px;">Leaking pipes or blocked drains? We fix it all.</p>
             <button class="btn-book" onclick="bookService('Plumber')">Book Now</button>
           </div>
           <div class="card">
             <div style="font-size: 50px;">⚡</div>
-            <h3>Electrical Work</h3>
-            <p style="color: #64748b;">Wiring, socket repairs, and fan installation.</p>
+            <h3>Electrical</h3>
+            <p style="color: #64748b; font-size: 14px;">Wiring, socket repairs, and installations.</p>
             <button class="btn-book" onclick="bookService('Electrician')">Book Now</button>
           </div>
           <div class="card">
             <div style="font-size: 50px;">❄️</div>
             <h3>AC Repair</h3>
-            <p style="color: #64748b;">Maintenance, gas refilling, and deep cleaning.</p>
+            <p style="color: #64748b; font-size: 14px;">Maintenance and gas refilling services.</p>
             <button class="btn-book" onclick="bookService('AC Repair')">Book Now</button>
           </div>
         </div>
@@ -126,18 +156,15 @@
     import { db, auth } from "./firebase.js";
     import { addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // Combine your Search logic with functionality
     window.searchService = function() {
         const query = document.getElementById('service').value;
-        if(query) {
-            alert("Searching for professionals in " + query + "...");
-        }
+        if(query) alert("Searching for " + query + "...");
     };
 
     window.bookService = async function(type) {
         const user = auth.currentUser;
         if(!user) {
-            alert("Please login first to confirm your booking.");
+            alert("Please login first to book.");
             window.location.href = "login.html";
             return;
         }

@@ -8,50 +8,59 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --primary: #2563eb; --success: #22c55e; }
-        body { font-family: 'Poppins', sans-serif; background: #f4f7fe; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        .header { padding: 15px 30px; background: white; display: flex; align-items: center; border-bottom: 4px solid var(--primary); }
-        .logo-text { font-size: 32px; font-weight: 700; color: var(--primary); text-decoration: none; }
+        :root { --primary: #2563eb; --bg: #f4f7fe; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* Updated Header for Logo + Title */
+        .header { padding: 10px 30px; background: white; display: flex; align-items: center; border-bottom: 4px solid var(--primary); }
+        .logo-container { display: flex; align-items: center; text-decoration: none; gap: 12px; }
+        .logo-img { height: 45px; width: auto; object-fit: contain; }
+        .logo-text { font-size: 28px; font-weight: 700; color: var(--primary); }
+        
         .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .payment-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        .service-info { background: #eff6ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        
+        /* Persistent Card Section */
+        .payment-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 420px; }
+        .service-info { background: #eff6ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid var(--primary); }
         h2 { color: var(--primary); margin-top: 0; text-align: center; }
+        
         .upi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .upi-option { border: 1px solid #e2e8f0; padding: 15px 10px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; }
-        .upi-option span { font-size: 14px; font-weight: 500; width: 80px; text-align: left; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        #qrcode-section { text-align: center; padding: 20px; background: #fafafa; border-radius: 12px; margin-bottom: 20px; }
+        .upi-option { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
+        .upi-option:hover { background: #f8fafc; border-color: var(--primary); }
+        .upi-option input { margin-right: 10px; }
+        .upi-option span { font-size: 13px; font-weight: 500; }
+        
+        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; }
+        
+        /* Automatic QR & Status Section */
+        #qrcode-section { text-align: center; padding: 20px; background: #fafafa; border-radius: 12px; margin-top: 20px; border: 2px dashed #e2e8f0; }
         #qrcode { display: flex; justify-content: center; margin: 15px 0; }
-        .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .btn-pay:hover { background: #1d4ed8; }
-        .btn-simulate { margin-top: 10px; background: var(--success); font-size: 12px; }
+        .mobile-upi-btn { display: none; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 10px; }
+        
         .hidden { display: none; }
         .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite; }
         @keyframes dots { 0%, 20% { content: ' .'; } 40% { content: ' . .'; } 60% { content: ' . . .'; } }
+        
+        @media (max-width: 600px) { .mobile-upi-btn { display: block; } }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <a href="index.html" class="logo-text">Home Assist</a>
+        <a href="index.html" class="logo-container">
+            <img src="favicon.png.png" alt="Home Assist Logo" class="logo-img">
+            <span class="logo-text">Home Assist</span>
+        </a>
     </header>
 
     <div class="main-content">
         <div class="payment-card">
             <h2>Complete Payment</h2>
+            
             <div class="service-info">
-                <p id="pay-for">Service: Loading...</p>
-                <p><strong>Total: <span id="pay-amount">₹0</span></strong></p>
-            </div>
-
-            <div id="qrcode-section" class="hidden">
-                <p style="font-size: 14px; font-weight: 600;">Scan to Pay</p>
-                <div id="qrcode"></div>
-                <p style="color: #2563eb; font-weight: 600;" class="loading-dots">Waiting for confirmation</p>
-                
-                <button class="btn-pay btn-simulate" onclick="simulatePaymentSuccess()">Demo: Confirm Payment</button>
-                
-                <p style="font-size: 11px; color: #ef4444; cursor: pointer; margin-top: 15px;" onclick="location.reload()">Cancel Payment</p>
+                <p id="pay-for" style="margin: 0; color: #1e40af;">Service: Loading...</p>
+                <p style="margin: 5px 0 0 0; font-size: 1.2rem;"><strong>Total: <span id="pay-amount">₹0</span></strong></p>
             </div>
 
             <div id="input-section">
@@ -61,85 +70,74 @@
                     <label class="upi-option"><input type="radio" name="upi-app"> <span>Paytm</span></label>
                     <label class="upi-option"><input type="radio" name="upi-app"> <span>BHIM Pay</span></label>
                 </div>
-                <input type="text" id="upi-id-input" placeholder="Or enter your UPI ID">
-                <button class="btn-pay" id="pay-button" onclick="processPayment()">Proceed to Pay</button>
+                <input type="text" id="upi-id-input" placeholder="Enter your UPI ID (Optional)">
+                <button class="btn-pay" id="pay-button" onclick="processPayment()">Generate QR to Pay</button>
+            </div>
+
+            <div id="qrcode-section" class="hidden">
+                <p style="font-size: 14px; font-weight: 600; margin: 0;">Scan with any UPI App</p>
+                <div id="qrcode"></div>
+                
+                <a id="mobile-pay-link" href="#" class="mobile-upi-btn">Open in UPI App</a>
+                
+                <p style="color: #2563eb; font-weight: 600; font-size: 13px; margin-top: 15px;" class="loading-dots">
+                    Awaiting database confirmation
+                </p>
+                <p style="font-size: 11px; color: #ef4444; cursor: pointer; margin-top: 10px;" onclick="location.reload()">Cancel</p>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { db, auth } from "./firebase.js";
-        import { addDoc, collection, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { addDoc, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const ADMIN_UPI = "prathamrana2612-1@oksbi"; 
         const params = new URLSearchParams(window.location.search);
         const service = params.get('service') || "General Service";
         const price = params.get('price') || "0";
-        
-        let currentBookingId = null;
 
         document.getElementById('pay-for').innerText = "Service: " + service;
         document.getElementById('pay-amount').innerText = "₹" + price;
 
-        // 1. Initiate the Process
         window.processPayment = async function() {
             const user = auth.currentUser;
-            if (!user) { 
-                alert("Please login to proceed."); 
-                return; 
-            }
+            if (!user) { alert("Please login first."); return; }
+
+            const payBtn = document.getElementById('pay-button');
+            payBtn.innerText = "Processing...";
+            payBtn.disabled = true;
 
             try {
-                // Create document in "bookings" collection
                 const docRef = await addDoc(collection(db, "bookings"), {
                     userId: user.uid,
                     userName: user.displayName || "Customer",
                     serviceType: service,
                     amount: price,
                     status: "pending",
-                    createdAt: new Date().toISOString()
+                    time: Date.now()
                 });
 
-                currentBookingId = docRef.id;
+                const upiLink = `upi://pay?pa=${ADMIN_UPI}&am=${price}&cu=INR&tn=HomeAssist-${docRef.id}`;
 
-                // Toggle UI
-                document.getElementById('input-section').classList.add('hidden');
                 document.getElementById('qrcode-section').classList.remove('hidden');
+                document.getElementById('mobile-pay-link').href = upiLink;
+                
+                const qrDiv = document.getElementById("qrcode");
+                qrDiv.innerHTML = ""; 
+                new QRCode(qrDiv, { text: upiLink, width: 180, height: 180 });
 
-                // Generate QR
-                new QRCode(document.getElementById("qrcode"), {
-                    text: `upi://pay?pa=${ADMIN_UPI}&am=${price}&cu=INR&tn=HomeAssist-${currentBookingId}`,
-                    width: 200, 
-                    height: 200
-                });
-
-                // 2. Real-time Listener: This waits for the DB to change to "paid"
-                onSnapshot(doc(db, "bookings", currentBookingId), (docSnap) => {
+                onSnapshot(doc(db, "bookings", docRef.id), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().status === "paid") {
-                        alert("✅ Payment Successful! Redirecting to your account...");
-                        window.location.href = "index.html"; // Or "account.html"
+                        alert("Payment Successful! Your account will reflect this shortly.");
+                        window.location.href = "account.html";
                     }
                 });
 
             } catch (e) { 
-                console.error("Error creating booking:", e);
-                alert("Error: " + e.message); 
-            }
-        };
-
-        // 3. Simulation Function (To bridge the gap since UPI doesn't auto-update Firebase)
-        window.simulatePaymentSuccess = async function() {
-            if (!currentBookingId) return;
-            
-            try {
-                const bookingRef = doc(db, "bookings", currentBookingId);
-                await updateDoc(bookingRef, {
-                    status: "paid",
-                    completedAt: new Date().toISOString()
-                });
-                // The onSnapshot above will catch this change and redirect!
-            } catch (e) {
-                alert("Error updating payment: " + e.message);
+                alert(e.message); 
+                payBtn.disabled = false;
+                payBtn.innerText = "Generate QR to Pay";
             }
         };
     </script>

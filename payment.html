@@ -130,7 +130,7 @@
                 onSnapshot(doc(db, "bookings", docRef.id), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().status === "paid") {
                         alert("Payment Successful! Your account will reflect this shortly.");
-                        window.location.href = "account.html";
+                        window.location.href = "login.html";
                     }
                 });
 

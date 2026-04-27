@@ -7,10 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --uc-brand: #008996; /* Teal from your logo */
-      --uc-dark: #002b5c;  /* Navy from your logo */
+      --uc-brand: #673ab7; 
+      --uc-dark: #0f172a;
       --uc-text-muted: #64748b;
-      --glass: rgba(255, 255, 255, 0.9);
+      --glass: rgba(255, 255, 255, 0.8);
       --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
       --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -30,7 +30,7 @@
 
     .animate-fade-up { animation: fadeInUp 0.8s ease-out forwards; }
 
-    /* Updated Navbar Styles */
+    /* Floating Navigation */
     .navbar {
       background: var(--glass);
       backdrop-filter: blur(12px);
@@ -43,49 +43,51 @@
       z-index: 2000;
       border: 1px solid rgba(255,255,255,0.3);
       box-shadow: var(--card-shadow);
-      padding: 10px 30px;
+      padding: 12px 30px;
       transition: var(--transition);
     }
 
-    .brand-wrap {
+    .logo-container {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
     }
 
-    .nav-logo {
-      height: 40px; /* Adjusted to fit with text */
-      width: auto;
-      border-radius: 50%; /* Keeps the circular logo shape */
+    .logo-icon {
+      background: var(--uc-brand);
+      color: white;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 20px;
     }
 
-    .brand-text {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--uc-brand);
-      letter-spacing: -0.5px;
-    }
-
-    /* Hero Section */
+    /* Hero Styling */
     .hero-container {
       padding: 180px 20px 80px;
-      background: radial-gradient(circle at top right, #e0f2f1, #ffffff);
+      background: radial-gradient(circle at top right, #f5f3ff, #ffffff);
       text-align: center;
     }
 
     .tagline-hindi {
       display: block;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: var(--uc-brand);
       margin-bottom: 10px;
       font-weight: 600;
+      opacity: 0.9;
     }
 
     .hero-title {
       font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 800;
+      letter-spacing: -1px;
       margin-bottom: 15px;
+      margin-top: 0;
       line-height: 1.2;
     }
 
@@ -99,6 +101,12 @@
       align-items: center;
       box-shadow: 0 10px 40px rgba(0,0,0,0.06);
       border: 1px solid #f1f5f9;
+      transition: var(--transition);
+    }
+
+    .search-pill:focus-within {
+      transform: scale(1.02);
+      box-shadow: 0 15px 50px rgba(103, 58, 183, 0.1);
     }
 
     .service-grid {
@@ -115,7 +123,9 @@
       padding: 30px 20px;
       border-radius: 24px;
       text-align: center;
+      cursor: pointer;
       transition: var(--transition);
+      border: 1px solid #f8fafc;
       box-shadow: var(--card-shadow);
     }
 
@@ -125,22 +135,29 @@
       color: white;
     }
 
+    .service-card:hover p { color: rgba(255,255,255,0.8); }
+
     .icon-wrap { font-size: 40px; margin-bottom: 15px; }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--uc-brand); border-radius: 10px; }
   </style>
 </head>
 <body>
 
   <header class="navbar">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <a href="index.html" class="brand-wrap">
-        <img src="logo.png.jpg" alt="Home Assist Logo" class="nav-logo">
-        <span class="brand-text">HomeAssist<span style="color:var(--uc-dark);">.</span></span>
+      <a href="index.html" class="logo-container">
+        <div class="logo-icon">H</div>
+        <span style="font-size:22px; font-weight:800; color:var(--uc-brand);">
+          HomeAssist<span style="color:var(--uc-dark);">.</span>
+        </span>
       </a>
 
-      <nav style="display:flex; gap:25px; align-items:center;">
+      <nav style="display:flex; gap:30px; align-items:center;">
         <a href="about.html" style="text-decoration:none; color:var(--uc-text-muted); font-weight:600; font-size:14px;">About</a>
         <a href="contact.html" style="text-decoration:none; color:var(--uc-text-muted); font-weight:600; font-size:14px;">Support</a>
-        <a href="login.html" style="background:var(--uc-dark); color:white; padding:10px 22px; border-radius:12px; text-decoration:none; font-weight:600; font-size:14px;">Get Started</a>
+        <a href="login.html" style="background:var(--uc-brand); color:white; padding:10px 25px; border-radius:12px; text-decoration:none; font-weight:600; font-size:14px; box-shadow: 0 4px 15px rgba(103, 58, 183, 0.3);">Get Started</a>
       </nav>
     </div>
   </header>
@@ -149,7 +166,11 @@
     <section class="hero-container">
       <div class="animate-fade-up">
         <span class="tagline-hindi">घर की हर ज़रूरत, अब एक ही जगह</span>
-        <h1 class="hero-title">Expert help for <br><span id="dynamic-text" style="color:var(--uc-brand); transition: opacity 0.4s;">every home need.</span></h1>
+        
+        <h1 class="hero-title">
+          Expert help for <br>
+          <span id="dynamic-text" style="color:var(--uc-brand); transition: opacity 0.4s;">every home need.</span>
+        </h1>
         <p style="color:var(--uc-text-muted); font-size:18px;">Quality services delivered to your doorstep in Bharuch.</p>
         
         <div class="search-pill">
@@ -162,23 +183,26 @@
     <section class="service-grid">
       <div class="service-card">
         <div class="icon-wrap">🚰</div>
-        <h3>Plumbing</h3>
+        <h3 style="margin:10px 0;">Plumbing</h3>
         <p style="font-size:12px; color:var(--uc-text-muted);">Starting at ₹149.</p>
       </div>
+
       <div class="service-card">
         <div class="icon-wrap">⚡</div>
-        <h3>Electrical</h3>
+        <h3 style="margin:10px 0;">Electrical</h3>
         <p style="font-size:12px; color:var(--uc-text-muted);">Wiring & Repairs.</p>
       </div>
+
       <div class="service-card">
         <div class="icon-wrap">❄️</div>
-        <h3>AC Repair</h3>
-        <p style="font-size:12px; color:var(--uc-text-muted);">Service & Gas Refill.</p>
+        <h3 style="margin:10px 0;">AC Repair</h3>
+        <p style="font-size:12px; color:var(--uc-text-muted);">Gas refilling & Cleaning.</p>
       </div>
+
       <div class="service-card">
         <div class="icon-wrap">🧹</div>
-        <h3>Cleaning</h3>
-        <p style="font-size:12px; color:var(--uc-text-muted);">Full Home Deep Clean.</p>
+        <h3 style="margin:10px 0;">Cleaning</h3>
+        <p style="font-size:12px; color:var(--uc-text-muted);">Deep home sanitation.</p>
       </div>
     </section>
   </main>

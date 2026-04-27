@@ -50,6 +50,12 @@
       transition: var(--transition);
     }
 
+    .navbar-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .brand-wrap {
       display: flex;
       align-items: center;
@@ -70,6 +76,39 @@
     }
 
     .assist-highlight { color: var(--uc-brand); }
+
+    /* Nav Links */
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--uc-text-muted);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .btn-get-started {
+      background: var(--uc-brand);
+      color: white !important;
+      padding: 10px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(103, 58, 183, 0.3);
+    }
+
+    /* Mobile Toggle Hidden by Default */
+    .menu-toggle {
+      display: none;
+      cursor: pointer;
+      font-size: 24px;
+    }
+
+    #menu-checkbox {
+      display: none;
+    }
 
     /* Hero Styling */
     .hero-container {
@@ -165,7 +204,7 @@
       gap: 20px;
       overflow-x: auto;
       padding: 20px 5px;
-      scrollbar-width: none; /* Firefox */
+      scrollbar-width: none;
     }
 
     .trending-scroll::-webkit-scrollbar { display: none; }
@@ -221,9 +260,42 @@
       font-size: 13px;
     }
 
+    /* FIXED MOBILE VIEW */
     @media (max-width: 768px) {
+      .navbar { width: 95%; padding: 10px 20px; }
+      
+      .menu-toggle { display: block; }
+
+      .nav-links {
+        display: none; /* Hide by default on mobile */
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        gap: 15px;
+        text-align: center;
+      }
+
+      /* Show links when checkbox is checked */
+      #menu-checkbox:checked ~ .nav-links {
+        display: flex;
+      }
+
       .footer-grid { grid-template-columns: 1fr 1fr; }
-      .navbar nav { display: none !important; }
+      
+      .search-pill {
+        flex-direction: column;
+        border-radius: 20px;
+        padding: 15px;
+      }
+      
+      .search-pill input { width: 100%; text-align: center; margin-bottom: 10px; }
+      .search-pill button { width: 100%; }
     }
 
     ::-webkit-scrollbar { width: 8px; }
@@ -233,7 +305,7 @@
 <body>
 
   <header class="navbar">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="navbar-content">
       <a href="index.html" class="brand-wrap">
         <img src="logo.png.png" alt="Logo" class="nav-logo">
         <span class="brand-text">
@@ -241,10 +313,13 @@
         </span>
       </a>
 
-      <nav style="display:flex; gap:30px; align-items:center;">
-        <a href="about.html" style="text-decoration:none; color:var(--uc-text-muted); font-weight:600; font-size:14px;">About</a>
-        <a href="contact.html" style="text-decoration:none; color:var(--uc-text-muted); font-weight:600; font-size:14px;">Support</a>
-        <a href="login.html" style="background:var(--uc-brand); color:white; padding:10px 25px; border-radius:12px; text-decoration:none; font-weight:600; font-size:14px; box-shadow: 0 4px 15px rgba(103, 58, 183, 0.3);">Get Started</a>
+      <input type="checkbox" id="menu-checkbox">
+      <label for="menu-checkbox" class="menu-toggle">☰</label>
+
+      <nav class="nav-links">
+        <a href="about.html">About</a>
+        <a href="contact.html">Support</a>
+        <a href="login.html" class="btn-get-started">Get Started</a>
       </nav>
     </div>
   </header>
@@ -360,7 +435,7 @@
         <h4>Support</h4>
         <ul>
           <li><a href="#">Help Center</a></li>
-          <li><a href="#">Contact Us</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
           <li><a href="#">Partner with us</a></li>
         </ul>
       </div>

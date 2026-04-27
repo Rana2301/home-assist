@@ -7,10 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --uc-brand: #673ab7; 
-      --uc-dark: #0f172a;
+      /* Updated brand colors based on your logo */
+      --uc-brand: #008996; /* Teal from logo */
+      --uc-dark: #002b5c;  /* Navy from logo */
       --uc-text-muted: #64748b;
-      --glass: rgba(255, 255, 255, 0.8);
+      --glass: rgba(255, 255, 255, 0.9);
       --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
       --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -23,6 +24,7 @@
       overflow-x: hidden;
     }
 
+    /* Animations */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -43,51 +45,44 @@
       z-index: 2000;
       border: 1px solid rgba(255,255,255,0.3);
       box-shadow: var(--card-shadow);
-      padding: 12px 30px;
+      padding: 8px 30px;
       transition: var(--transition);
     }
 
     .logo-container {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
     }
 
-    .logo-icon {
-      background: var(--uc-brand);
-      color: white;
-      width: 35px;
-      height: 35px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      font-size: 20px;
+    .logo-img {
+      height: 45px; /* Perfect height for navbar */
+      width: auto;
+      object-fit: contain;
     }
 
-    /* Hero Styling */
+    /* Hero Section */
     .hero-container {
       padding: 180px 20px 80px;
-      background: radial-gradient(circle at top right, #f5f3ff, #ffffff);
+      background: radial-gradient(circle at top right, #e0f2f1, #ffffff);
       text-align: center;
     }
 
     .tagline-hindi {
       display: block;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: var(--uc-brand);
       margin-bottom: 10px;
       font-weight: 600;
-      opacity: 0.9;
+      letter-spacing: 0.5px;
     }
 
     .hero-title {
       font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 800;
       letter-spacing: -1px;
-      margin-bottom: 15px;
-      margin-top: 0;
+      margin: 0 0 15px;
       line-height: 1.2;
     }
 
@@ -106,9 +101,10 @@
 
     .search-pill:focus-within {
       transform: scale(1.02);
-      box-shadow: 0 15px 50px rgba(103, 58, 183, 0.1);
+      box-shadow: 0 15px 50px rgba(0, 137, 150, 0.15);
     }
 
+    /* Service Grid */
     .service-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -148,16 +144,14 @@
   <header class="navbar">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <a href="index.html" class="logo-container">
-        <div class="logo-icon">H</div>
-        <span style="font-size:22px; font-weight:800; color:var(--uc-brand);">
-          HomeAssist<span style="color:var(--uc-dark);">.</span>
-        </span>
+        <img src="logo.png.jpg" alt="Home Assist Logo" class="logo-img">
+        <span style="font-size:20px; font-weight:800; color:var(--uc-dark); display: none;">Home Assist</span>
       </a>
 
       <nav style="display:flex; gap:30px; align-items:center;">
         <a href="about.html" style="text-decoration:none; color:var(--uc-text-muted); font-weight:600; font-size:14px;">About</a>
         <a href="contact.html" style="text-decoration:none; color:var(--uc-text-muted); font-weight:600; font-size:14px;">Support</a>
-        <a href="login.html" style="background:var(--uc-brand); color:white; padding:10px 25px; border-radius:12px; text-decoration:none; font-weight:600; font-size:14px; box-shadow: 0 4px 15px rgba(103, 58, 183, 0.3);">Get Started</a>
+        <a href="login.html" style="background:var(--uc-dark); color:white; padding:10px 25px; border-radius:12px; text-decoration:none; font-weight:600; font-size:14px; box-shadow: 0 4px 15px rgba(0, 43, 92, 0.2);">Get Started</a>
       </nav>
     </div>
   </header>
@@ -221,6 +215,7 @@
       }, 400);
     }, 3000);
 
+    // Dynamic Navbar adjustment
     window.onscroll = () => {
       const nav = document.querySelector('.navbar');
       if (window.scrollY > 50) {

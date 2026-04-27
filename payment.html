@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" href="favicon.png.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root { --primary: #2563eb; }
         
@@ -18,7 +19,6 @@
             min-height: 100vh; 
         }
 
-        /* Consistent Header Branding */
         .header {
             padding: 15px 30px;
             background: white;
@@ -34,19 +34,9 @@
             gap: 12px;
         }
 
-        .logo-img {
-            width: 45px;
-            height: 45px;
-            object-fit: contain;
-        }
+        .logo-img { width: 45px; height: 45px; object-fit: contain; }
+        .logo-text { font-size: 32px; font-weight: 700; color: var(--primary); }
 
-        .logo-text { 
-            font-size: 32px; 
-            font-weight: 700; 
-            color: var(--primary); 
-        }
-
-        /* Centering the Payment Card */
         .main-content {
             flex: 1;
             display: flex;
@@ -67,19 +57,48 @@
         .service-info { background: #eff6ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
         h2 { color: var(--primary); margin-top: 0; text-align: center; }
         
-        /* Tab Styling */
         .payment-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; }
         .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-size: 14px; color: #64748b; border-bottom: 2px solid transparent; }
         .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: 600; }
 
-        /* UPI Grid */
+        /* FIXED ALIGNMENT CSS */
         .upi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .upi-option { border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; }
+        .upi-option { 
+            border: 1px solid #e2e8f0; 
+            padding: 15px 10px; 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; /* Centers items in the box */
+            gap: 12px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+        }
         .upi-option:hover { border-color: var(--primary); background: #f8faff; }
-        .upi-option input { width: auto; margin: 0; }
-        .upi-option label { font-size: 13px; cursor: pointer; }
-
+        .upi-option input { width: auto; margin: 0; cursor: pointer; }
+        .upi-option label { 
+            font-size: 14px; 
+            cursor: pointer; 
+            width: 80px; /* Fixed width ensures names start at the same point */
+            text-align: left;
+            font-weight: 500;
+        }
+        
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; }
+        
+        #qrcode-section {
+            text-align: center;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
         .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
         .btn-pay:disabled { background: #94a3b8; cursor: not-allowed; }
         .hidden { display: none; }
@@ -97,49 +116,60 @@
     <div class="main-content">
         <div class="payment-card">
             <h2>Complete Payment</h2>
+            
             <div class="service-info">
                 <p id="pay-for" style="margin:0 0 5px 0;">Service: Loading...</p>
                 <p style="margin:0;"><strong>Total Amount: <span id="pay-amount">₹0</span></strong></p>
             </div>
 
-            <div class="payment-tabs">
-                <div class="tab active" id="tab-upi" onclick="switchMethod('upi')">UPI Apps</div>
-                <div class="tab" id="tab-card" onclick="switchMethod('card')">Card</div>
-            </div>
-            
-            <div id="section-upi">
-                <p style="font-size: 14px; color: #64748b;">Select your preferred app:</p>
-                <div class="upi-grid">
-                    <div class="upi-option">
-                        <input type="radio" name="upi-app" id="gpay" value="GPay" checked>
-                        <label for="gpay">Google Pay</label>
-                    </div>
-                    <div class="upi-option">
-                        <input type="radio" name="upi-app" id="phonepe" value="PhonePe">
-                        <label for="phonepe">PhonePe</label>
-                    </div>
-                    <div class="upi-option">
-                        <input type="radio" name="upi-app" id="paytm" value="Paytm">
-                        <label for="paytm">Paytm</label>
-                    </div>
-                    <div class="upi-option">
-                        <input type="radio" name="upi-app" id="bhim" value="BHIM">
-                        <label for="bhim">BHIM Pay</label>
-                    </div>
-                </div>
-                <input type="text" id="upi-id" placeholder="Enter UPI ID (optional)">
+            <div id="qrcode-section" class="hidden">
+                <p style="font-size: 14px; font-weight: 600;">Scan with any UPI App</p>
+                <div id="qrcode"></div>
+                <p style="font-size: 12px; color: #64748b;">Pay exactly <strong id="qr-total-display"></strong></p>
+                <button class="btn-pay" onclick="confirmPaymentRecord()">I have completed the payment</button>
+                <p style="font-size: 11px; margin-top: 10px; color: #ef4444; cursor: pointer;" onclick="resetUI()">Cancel / Change Method</p>
             </div>
 
-            <div id="section-card" class="hidden">
-                <input type="text" id="card-name" placeholder="Cardholder Name">
-                <input type="text" id="card-number" placeholder="1234 5678 9101 1121" maxlength="19">
-                <div style="display:flex; gap:10px;">
-                    <input type="text" placeholder="MM/YY" maxlength="5">
-                    <input type="password" placeholder="CVV" maxlength="3">
+            <div id="input-section">
+                <div class="payment-tabs">
+                    <div class="tab active" id="tab-upi" onclick="switchMethod('upi')">UPI Apps</div>
+                    <div class="tab" id="tab-card" onclick="switchMethod('card')">Card</div>
                 </div>
+                
+                <div id="section-upi">
+                    <p style="font-size: 14px; color: #64748b;">Select your preferred app:</p>
+                    <div class="upi-grid">
+                        <label class="upi-option">
+                            <input type="radio" name="upi-app" id="gpay" value="Google Pay" checked>
+                            <span>Google Pay</span>
+                        </label>
+                        <label class="upi-option">
+                            <input type="radio" name="upi-app" id="phonepe" value="PhonePe">
+                            <span>PhonePe</span>
+                        </label>
+                        <label class="upi-option">
+                            <input type="radio" name="upi-app" id="paytm" value="Paytm">
+                            <span>Paytm</span>
+                        </label>
+                        <label class="upi-option">
+                            <input type="radio" name="upi-app" id="bhim" value="BHIM Pay">
+                            <span>BHIM Pay</span>
+                        </label>
+                    </div>
+                    <input type="text" id="upi-id" placeholder="Or enter your UPI ID for request">
+                </div>
+
+                <div id="section-card" class="hidden">
+                    <input type="text" id="card-name" placeholder="Cardholder Name">
+                    <input type="text" id="card-number" placeholder="1234 5678 9101 1121" maxlength="19">
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" placeholder="MM/YY" maxlength="5">
+                        <input type="password" placeholder="CVV" maxlength="3">
+                    </div>
+                </div>
+                
+                <button class="btn-pay" id="pay-button" onclick="processPayment()">Proceed to Pay</button>
             </div>
-            
-            <button class="btn-pay" id="pay-button" onclick="processPayment()">Proceed to Pay</button>
         </div>
     </div>
 
@@ -147,12 +177,20 @@
         import { db, auth } from "./firebase.js";
         import { addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+        // ==========================================
+        // ADMIN CONFIGURATION
+        // ==========================================
+        const ADMIN_UPI_ID = "prathamrana2612-1@oksbi"; 
+        const ADMIN_NAME = "Home Assist Admin";
+        // ==========================================
+
         const params = new URLSearchParams(window.location.search);
         const service = params.get('service') || "General Service";
         const price = params.get('price') || "0";
 
         document.getElementById('pay-for').innerText = "Service: " + service;
         document.getElementById('pay-amount').innerText = "₹" + price;
+        document.getElementById('qr-total-display').innerText = "₹" + price;
 
         let selectedMethod = 'upi';
 
@@ -164,28 +202,46 @@
             document.getElementById('tab-card').classList.toggle('active', method === 'card');
         };
 
-        window.processPayment = async function() {
-            const user = auth.currentUser;
-            const payBtn = document.getElementById('pay-button');
+        window.resetUI = function() {
+            document.getElementById('input-section').classList.remove('hidden');
+            document.getElementById('qrcode-section').classList.add('hidden');
+            document.getElementById("qrcode").innerHTML = "";
+        };
 
-            if (!user) {
-                alert("Please login first.");
-                window.location.href = "login.html";
-                return;
+        window.processPayment = function() {
+            const userInputUpi = document.getElementById('upi-id').value;
+
+            if (selectedMethod === 'upi') {
+                if (userInputUpi.trim() !== "") {
+                    alert(`Request of ₹${price} sent to ${userInputUpi}. Check your app.`);
+                    confirmPaymentRecord();
+                } else {
+                    generateAdminQR();
+                }
+            } else {
+                confirmPaymentRecord();
             }
+        };
+
+        function generateAdminQR() {
+            document.getElementById('input-section').classList.add('hidden');
+            document.getElementById('qrcode-section').classList.remove('hidden');
+            
+            const upiUrl = `upi://pay?pa=${ADMIN_UPI_ID}&pn=${encodeURIComponent(ADMIN_NAME)}&am=${price}&cu=INR&tn=${encodeURIComponent(service)}`;
+
+            new QRCode(document.getElementById("qrcode"), {
+                text: upiUrl,
+                width: 200,
+                height: 200
+            });
+        }
+
+        window.confirmPaymentRecord = async function() {
+            const user = auth.currentUser;
+            if (!user) { alert("Please login first."); return; }
 
             try {
-                payBtn.disabled = true;
-                payBtn.innerText = "Processing...";
-
-                let paymentDetail = "";
-                if (selectedMethod === 'upi') {
-                    const selectedApp = document.querySelector('input[name="upi-app"]:checked').value;
-                    paymentDetail = `UPI (${selectedApp})`;
-                } else {
-                    paymentDetail = "Credit/Debit Card";
-                }
-
+                let paymentDetail = (selectedMethod === 'upi') ? "UPI (Admin QR)" : "Card";
                 await addDoc(collection(db, "bookings"), {
                     userId: user.uid,
                     userName: user.displayName || "Customer",
@@ -196,12 +252,10 @@
                     time: Date.now()
                 });
 
-                alert(`Payment successful via ${paymentDetail}!`);
+                alert("Payment successful! Thank you for choosing our service.");
                 window.location.href = "index.html"; 
             } catch (error) {
                 alert("Error: " + error.message);
-                payBtn.disabled = false;
-                payBtn.innerText = "Proceed to Pay";
             }
         };
     </script>

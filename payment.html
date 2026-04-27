@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --primary: #2563eb; }
+        :root { --primary: #2563eb; --success: #22c55e; }
         body { font-family: 'Poppins', sans-serif; background: #f4f7fe; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
         .header { padding: 15px 30px; background: white; display: flex; align-items: center; border-bottom: 4px solid var(--primary); }
         .logo-text { font-size: 32px; font-weight: 700; color: var(--primary); text-decoration: none; }
@@ -22,7 +22,9 @@
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         #qrcode-section { text-align: center; padding: 20px; background: #fafafa; border-radius: 12px; margin-bottom: 20px; }
         #qrcode { display: flex; justify-content: center; margin: 15px 0; }
-        .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-pay:hover { background: #1d4ed8; }
+        .btn-simulate { margin-top: 10px; background: var(--success); font-size: 12px; }
         .hidden { display: none; }
         .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite; }
         @keyframes dots { 0%, 20% { content: ' .'; } 40% { content: ' . .'; } 60% { content: ' . . .'; } }
@@ -46,7 +48,10 @@
                 <p style="font-size: 14px; font-weight: 600;">Scan to Pay</p>
                 <div id="qrcode"></div>
                 <p style="color: #2563eb; font-weight: 600;" class="loading-dots">Waiting for confirmation</p>
-                <p style="font-size: 11px; color: #ef4444; cursor: pointer;" onclick="location.reload()">Cancel</p>
+                
+                <button class="btn-pay btn-simulate" onclick="simulatePaymentSuccess()">Demo: Confirm Payment</button>
+                
+                <p style="font-size: 11px; color: #ef4444; cursor: pointer; margin-top: 15px;" onclick="location.reload()">Cancel Payment</p>
             </div>
 
             <div id="input-section">
@@ -64,47 +69,78 @@
 
     <script type="module">
         import { db, auth } from "./firebase.js";
-        import { addDoc, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { addDoc, collection, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        const ADMIN_UPI = "prathamrana2612-1@oksbi"; // Change this!
+        const ADMIN_UPI = "prathamrana2612-1@oksbi"; 
         const params = new URLSearchParams(window.location.search);
         const service = params.get('service') || "General Service";
         const price = params.get('price') || "0";
+        
+        let currentBookingId = null;
 
         document.getElementById('pay-for').innerText = "Service: " + service;
         document.getElementById('pay-amount').innerText = "₹" + price;
 
+        // 1. Initiate the Process
         window.processPayment = async function() {
             const user = auth.currentUser;
-            if (!user) { alert("Please login."); return; }
+            if (!user) { 
+                alert("Please login to proceed."); 
+                return; 
+            }
 
             try {
-                // 1. Create the pending record
+                // Create document in "bookings" collection
                 const docRef = await addDoc(collection(db, "bookings"), {
                     userId: user.uid,
                     userName: user.displayName || "Customer",
                     serviceType: service,
                     amount: price,
                     status: "pending",
-                    time: Date.now()
+                    createdAt: new Date().toISOString()
                 });
 
-                // 2. Show QR Code
+                currentBookingId = docRef.id;
+
+                // Toggle UI
                 document.getElementById('input-section').classList.add('hidden');
                 document.getElementById('qrcode-section').classList.remove('hidden');
+
+                // Generate QR
                 new QRCode(document.getElementById("qrcode"), {
-                    text: `upi://pay?pa=${ADMIN_UPI}&am=${price}&cu=INR`,
-                    width: 200, height: 200
+                    text: `upi://pay?pa=${ADMIN_UPI}&am=${price}&cu=INR&tn=HomeAssist-${currentBookingId}`,
+                    width: 200, 
+                    height: 200
                 });
 
-                // 3. Start Listening for your update in Firebase
-                onSnapshot(doc(db, "bookings", docRef.id), (docSnap) => {
+                // 2. Real-time Listener: This waits for the DB to change to "paid"
+                onSnapshot(doc(db, "bookings", currentBookingId), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().status === "paid") {
-                        alert("Payment Successful! SMS Sent: Thank you for choosing our service.");
-                        window.location.href = "index.html"; // Redirect to account/home
+                        alert("✅ Payment Successful! Redirecting to your account...");
+                        window.location.href = "index.html"; // Or "account.html"
                     }
                 });
-            } catch (e) { alert(e.message); }
+
+            } catch (e) { 
+                console.error("Error creating booking:", e);
+                alert("Error: " + e.message); 
+            }
+        };
+
+        // 3. Simulation Function (To bridge the gap since UPI doesn't auto-update Firebase)
+        window.simulatePaymentSuccess = async function() {
+            if (!currentBookingId) return;
+            
+            try {
+                const bookingRef = doc(db, "bookings", currentBookingId);
+                await updateDoc(bookingRef, {
+                    status: "paid",
+                    completedAt: new Date().toISOString()
+                });
+                // The onSnapshot above will catch this change and redirect!
+            } catch (e) {
+                alert("Error updating payment: " + e.message);
+            }
         };
     </script>
 </body>

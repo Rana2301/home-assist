@@ -59,7 +59,7 @@ window.handleLogin = async () => {
         window.location.href = "index.html"; 
         
     } catch (e) {
-        if (e.code === 'auth/user-not-found') {
+        if (e.code === 'user-not-found') {
             alert("You have not registered; please sign up first.");
         } else {
             alert("Login error: " + e.message);

@@ -3,54 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <title>Secure Payment | Home Assist</title>
+    <link rel="icon" type="image/png" href="favicon.png.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #f4f7fe; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .payment-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        :root { --primary: #2563eb; }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #f4f7fe; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+
+        /* Consistent Header Branding */
+        .header {
+            padding: 15px 30px;
+            background: white;
+            display: flex;
+            align-items: center;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .logo-text { 
+            font-size: 32px; 
+            font-weight: 700; 
+            color: var(--primary); 
+        }
+
+        /* Centering the Payment Card */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .payment-card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 400px; 
+        }
+
         .service-info { background: #eff6ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        h2 { color: #2563eb; margin-top: 0; text-align: center; }
+        h2 { color: var(--primary); margin-top: 0; text-align: center; }
+        
+        /* Tab Styling */
+        .payment-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; }
+        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-size: 14px; color: #64748b; border-bottom: 2px solid transparent; }
+        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: 600; }
+
+        /* UPI Grid */
+        .upi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        .upi-option { border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; }
+        .upi-option:hover { border-color: var(--primary); background: #f8faff; }
+        .upi-option input { width: auto; margin: 0; }
+        .upi-option label { font-size: 13px; cursor: pointer; }
+
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; }
-        .btn-pay { width: 100%; padding: 15px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
         .btn-pay:disabled { background: #94a3b8; cursor: not-allowed; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div class="payment-card">
-        <h2>Complete Payment</h2>
-        <div class="service-info">
-            <p id="pay-for">Service: Loading...</p>
-            <p><strong>Total Amount: <span id="pay-amount">₹0</span></strong></p>
+
+    <header class="header">
+        <a href="index.html" class="logo-container">
+            <img src="logo.png.png" alt="Home Assist Logo" class="logo-img">
+            <span class="logo-text">Home Assist</span>
+        </a>
+    </header>
+
+    <div class="main-content">
+        <div class="payment-card">
+            <h2>Complete Payment</h2>
+            <div class="service-info">
+                <p id="pay-for" style="margin:0 0 5px 0;">Service: Loading...</p>
+                <p style="margin:0;"><strong>Total Amount: <span id="pay-amount">₹0</span></strong></p>
+            </div>
+
+            <div class="payment-tabs">
+                <div class="tab active" id="tab-upi" onclick="switchMethod('upi')">UPI Apps</div>
+                <div class="tab" id="tab-card" onclick="switchMethod('card')">Card</div>
+            </div>
+            
+            <div id="section-upi">
+                <p style="font-size: 14px; color: #64748b;">Select your preferred app:</p>
+                <div class="upi-grid">
+                    <div class="upi-option">
+                        <input type="radio" name="upi-app" id="gpay" value="GPay" checked>
+                        <label for="gpay">Google Pay</label>
+                    </div>
+                    <div class="upi-option">
+                        <input type="radio" name="upi-app" id="phonepe" value="PhonePe">
+                        <label for="phonepe">PhonePe</label>
+                    </div>
+                    <div class="upi-option">
+                        <input type="radio" name="upi-app" id="paytm" value="Paytm">
+                        <label for="paytm">Paytm</label>
+                    </div>
+                    <div class="upi-option">
+                        <input type="radio" name="upi-app" id="bhim" value="BHIM">
+                        <label for="bhim">BHIM Pay</label>
+                    </div>
+                </div>
+                <input type="text" id="upi-id" placeholder="Enter UPI ID (optional)">
+            </div>
+
+            <div id="section-card" class="hidden">
+                <input type="text" id="card-name" placeholder="Cardholder Name">
+                <input type="text" id="card-number" placeholder="1234 5678 9101 1121" maxlength="19">
+                <div style="display:flex; gap:10px;">
+                    <input type="text" placeholder="MM/YY" maxlength="5">
+                    <input type="password" placeholder="CVV" maxlength="3">
+                </div>
+            </div>
+            
+            <button class="btn-pay" id="pay-button" onclick="processPayment()">Proceed to Pay</button>
         </div>
-        
-        <input type="text" id="card-name" placeholder="Cardholder Name" required>
-        <input type="text" id="card-number" placeholder="1234 5678 9101 1121" maxlength="19">
-        <div style="display:flex; gap:10px;">
-            <input type="text" placeholder="MM/YY" maxlength="5">
-            <input type="password" placeholder="CVV" maxlength="3">
-        </div>
-        
-        <button class="btn-pay" id="pay-button" onclick="processPayment()">Confirm & Pay</button>
     </div>
 
     <script type="module">
         import { db, auth } from "./firebase.js";
         import { addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // Read data from the URL passed by services.html
         const params = new URLSearchParams(window.location.search);
         const service = params.get('service') || "General Service";
-        const price = params.get('price') || "199";
+        const price = params.get('price') || "0";
 
         document.getElementById('pay-for').innerText = "Service: " + service;
         document.getElementById('pay-amount').innerText = "₹" + price;
+
+        let selectedMethod = 'upi';
+
+        window.switchMethod = function(method) {
+            selectedMethod = method;
+            document.getElementById('section-upi').classList.toggle('hidden', method !== 'upi');
+            document.getElementById('section-card').classList.toggle('hidden', method !== 'card');
+            document.getElementById('tab-upi').classList.toggle('active', method === 'upi');
+            document.getElementById('tab-card').classList.toggle('active', method === 'card');
+        };
 
         window.processPayment = async function() {
             const user = auth.currentUser;
             const payBtn = document.getElementById('pay-button');
 
             if (!user) {
-                alert("Please login again.");
+                alert("Please login first.");
                 window.location.href = "login.html";
                 return;
             }
@@ -59,22 +178,30 @@
                 payBtn.disabled = true;
                 payBtn.innerText = "Processing...";
 
-                // Save to Firestore
+                let paymentDetail = "";
+                if (selectedMethod === 'upi') {
+                    const selectedApp = document.querySelector('input[name="upi-app"]:checked').value;
+                    paymentDetail = `UPI (${selectedApp})`;
+                } else {
+                    paymentDetail = "Credit/Debit Card";
+                }
+
                 await addDoc(collection(db, "bookings"), {
                     userId: user.uid,
                     userName: user.displayName || "Customer",
                     serviceType: service,
                     amount: price,
+                    paymentMethod: paymentDetail,
                     status: "paid",
                     time: Date.now()
                 });
 
-                alert("Payment Successful! Booking confirmed.");
+                alert(`Payment successful via ${paymentDetail}!`);
                 window.location.href = "index.html"; 
             } catch (error) {
                 alert("Error: " + error.message);
                 payBtn.disabled = false;
-                payBtn.innerText = "Confirm & Pay";
+                payBtn.innerText = "Proceed to Pay";
             }
         };
     </script>

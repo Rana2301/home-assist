@@ -4,40 +4,107 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Our Services | Home Assist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="favicon.png.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     :root { --primary: #2563eb; --bg: #f8fafc; --accent: #1e40af; }
-    body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 20px; padding-bottom: 100px; }
-    .header { text-align: center; margin-bottom: 40px; }
-    .header h1 { color: var(--primary); margin-bottom: 5px; }
     
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      background: var(--bg); 
+      margin: 0; 
+      padding-bottom: 100px; 
+    }
+
+    /* Consistent Header Branding */
+    .header-nav {
+      padding: 15px 30px;
+      background: white;
+      display: flex;
+      justify-content: space-between; 
+      align-items: center;
+      border-bottom: 4px solid var(--primary);
+      position: sticky;
+      top: 0;
+      z-index: 1001;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 12px;
+    }
+
+    .logo-img {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+    }
+
+    .logo-text { 
+      font-size: 32px; 
+      font-weight: 700; 
+      color: var(--primary); 
+    }
+
+    /* Back to Home Button Styling */
+    .btn-back-nav {
+      text-decoration: none;
+      background: #f1f5f9;
+      color: #1e293b;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      border: 1px solid #e2e8f0;
+      transition: 0.3s;
+    }
+
+    .btn-back-nav:hover {
+      background: #e2e8f0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .page-title { text-align: center; margin-bottom: 40px; }
+    .page-title h1 { color: var(--primary); margin-bottom: 5px; }
+    
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
     .service-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
     
     .tag { background: #dbeafe; color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
     h3 { margin: 15px 0 10px 0; color: #1e293b; }
 
-    /* Task Selection Styles */
     .task-list { list-style: none; padding: 0; margin: 15px 0; }
     .task-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
     .task-item:last-child { border-bottom: none; }
     .task-item input { margin-right: 10px; width: 18px; height: 18px; cursor: pointer; }
     .task-price { font-weight: 600; color: #64748b; }
 
-    /* Bottom Bar for Total */
     .booking-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); display: flex; justify-content: center; z-index: 1000; }
     .bar-content { width: 100%; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; }
     .total-display { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
     .btn-book { background: var(--primary); color: white; border: none; padding: 12px 40px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 1rem; }
     .btn-book:hover { background: var(--accent); }
-    .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary); text-decoration: none; font-weight: 500; }
   </style>
 </head>
 <body>
 
-  <div style="max-width: 1200px; margin: 0 auto;">
-    <a href="index.html" class="back-link">← Back to Home</a>
-    <div class="header">
+  <nav class="header-nav">
+    <a href="index.html" class="logo-container">
+      <img src="logo.png.png" alt="Home Assist Logo" class="logo-img">
+      <span class="logo-text">Home Assist</span>
+    </a>
+    <a href="index.html" class="btn-back-nav">← Back to Home</a>
+  </nav>
+
+  <div class="container">
+    <div class="page-title">
       <h1>Available Services</h1>
       <p>Select the tasks you need help with</p>
     </div>
@@ -126,7 +193,6 @@
   const checkboxes = document.querySelectorAll('.service-check');
   const totalDisplay = document.getElementById('grand-total');
 
-  // Function to calculate total price
   function updateTotal() {
       let total = 0;
       checkboxes.forEach(cb => {
@@ -137,7 +203,6 @@
       totalDisplay.innerText = total;
   }
 
-  // Add event listener to every checkbox
   checkboxes.forEach(cb => {
       cb.addEventListener('change', updateTotal);
   });

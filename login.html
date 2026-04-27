@@ -3,33 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <title>Login | Home Assist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="favicon.png.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root { --primary: #2563eb; }
-    body { font-family: 'Poppins', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .auth-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 350px; }
+    
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      background: #f8fafc; 
+      margin: 0; 
+      display: flex; 
+      flex-direction: column; 
+      min-height: 100vh; 
+    }
+
+    /* Header styling consistent with about.html and forgot.html */
+    .header {
+      padding: 15px 30px;
+      background: white;
+      display: flex;
+      align-items: center;
+      border-bottom: 4px solid var(--primary);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 12px;
+    }
+
+    .logo-img {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+    }
+
+    .logo-text { 
+      font-size: 32px; 
+      font-weight: 700; 
+      color: var(--primary); 
+    }
+
+    /* Centering the Login Card */
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .auth-card { 
+      background: white; 
+      padding: 30px; 
+      border-radius: 15px; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+      width: 100%; 
+      max-width: 350px; 
+    }
+
     h2 { color: var(--primary); text-align: center; margin-bottom: 20px; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-    button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+    button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+    button:hover { opacity: 0.9; }
+    
     .password-container { position: relative; width: 100%; }
     .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #64748b; }
     .link-text { display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #64748b; text-decoration: none; }
   </style>
 </head>
 <body>
-  <div class="auth-card">
-    <h2>Login</h2>
-    <input type="text" id="login-identifier" placeholder="Email or Mobile Number">
-    
-    <div class="password-container">
-      <input type="password" id="login-pass" placeholder="Password">
-      <span class="toggle-password" onclick="togglePassword('login-pass')">👁️</span>
-    </div>
 
-    <button onclick="handleLogin()">Login</button>
-    <a href="forgot.html" class="link-text">Forgot Password?</a>
-    <a href="signup.html" class="link-text" style="color: var(--primary);">Don't have an account? Sign Up</a>
+  <header class="header">
+    <a href="index.html" class="logo-container">
+      <img src="logo.png.png" alt="Home Assist Logo" class="logo-img">
+      <span class="logo-text">Home Assist</span>
+    </a>
+  </header>
+
+  <div class="main-content">
+    <div class="auth-card">
+      <h2>Login</h2>
+      <input type="text" id="login-identifier" placeholder="Email or Mobile Number">
+      
+      <div class="password-container">
+        <input type="password" id="login-pass" placeholder="Password">
+        <span class="toggle-password" onclick="togglePassword('login-pass')">👁️</span>
+      </div>
+
+      <button onclick="handleLogin()">Login</button>
+      <a href="forgot.html" class="link-text">Forgot Password?</a>
+      <a href="signup.html" class="link-text" style="color: var(--primary); font-weight: 600;">Don't have an account? Sign Up</a>
+    </div>
   </div>
+
   <script type="module" src="app.js"></script>
+  <script>
+    // Inline helper for password toggling
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+  </script>
 </body>
 </html>

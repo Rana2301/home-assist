@@ -9,156 +9,54 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root { --primary: #2563eb; }
-        
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: #f4f7fe; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-        }
-
-        .header {
-            padding: 15px 30px;
-            background: white;
-            display: flex;
-            align-items: center;
-            border-bottom: 4px solid var(--primary);
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            gap: 12px;
-        }
-
-        .logo-img { width: 45px; height: 45px; object-fit: contain; }
-        .logo-text { font-size: 32px; font-weight: 700; color: var(--primary); }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .payment-card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-            width: 100%; 
-            max-width: 400px; 
-        }
-
+        body { font-family: 'Poppins', sans-serif; background: #f4f7fe; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        .header { padding: 15px 30px; background: white; display: flex; align-items: center; border-bottom: 4px solid var(--primary); }
+        .logo-text { font-size: 32px; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .payment-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
         .service-info { background: #eff6ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
         h2 { color: var(--primary); margin-top: 0; text-align: center; }
-        
-        .payment-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; }
-        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-size: 14px; color: #64748b; border-bottom: 2px solid transparent; }
-        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: 600; }
-
         .upi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .upi-option { 
-            border: 1px solid #e2e8f0; 
-            padding: 15px 10px; 
-            border-radius: 8px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 12px; 
-            cursor: pointer; 
-        }
+        .upi-option { border: 1px solid #e2e8f0; padding: 15px 10px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; }
         .upi-option span { font-size: 14px; font-weight: 500; width: 80px; text-align: left; }
-        
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; }
-        
-        #qrcode-section {
-            text-align: center;
-            padding: 20px;
-            background: #fafafa;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        #qrcode-section { text-align: center; padding: 20px; background: #fafafa; border-radius: 12px; margin-bottom: 20px; }
         #qrcode { display: flex; justify-content: center; margin: 15px 0; }
-
-        .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        .btn-pay:disabled { background: #94a3b8; cursor: not-allowed; }
+        .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .hidden { display: none; }
-
-        .loading-dots:after {
-            content: ' .';
-            animation: dots 1s steps(5, end) infinite;
-        }
+        .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite; }
         @keyframes dots { 0%, 20% { content: ' .'; } 40% { content: ' . .'; } 60% { content: ' . . .'; } }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <a href="index.html" class="logo-container">
-            <img src="logo.png.png" alt="Home Assist Logo" class="logo-img">
-            <span class="logo-text">Home Assist</span>
-        </a>
+        <a href="index.html" class="logo-text">Home Assist</a>
     </header>
 
     <div class="main-content">
         <div class="payment-card">
             <h2>Complete Payment</h2>
-            
             <div class="service-info">
-                <p id="pay-for" style="margin:0 0 5px 0;">Service: Loading...</p>
-                <p style="margin:0;"><strong>Total Amount: <span id="pay-amount">₹0</span></strong></p>
+                <p id="pay-for">Service: Loading...</p>
+                <p><strong>Total: <span id="pay-amount">₹0</span></strong></p>
             </div>
 
             <div id="qrcode-section" class="hidden">
-                <p style="font-size: 14px; font-weight: 600;">Scan with any UPI App</p>
+                <p style="font-size: 14px; font-weight: 600;">Scan to Pay</p>
                 <div id="qrcode"></div>
-                <p style="font-size: 13px; color: #2563eb; font-weight: 600;" class="loading-dots">Waiting for payment confirmation</p>
-                <p style="font-size: 11px; color: #64748b; margin-top: 10px;">The page will automatically redirect once the admin receives your payment.</p>
-                <p style="font-size: 11px; margin-top: 15px; color: #ef4444; cursor: pointer; text-decoration: underline;" onclick="resetUI()">Cancel Payment</p>
+                <p style="color: #2563eb; font-weight: 600;" class="loading-dots">Waiting for confirmation</p>
+                <p style="font-size: 11px; color: #ef4444; cursor: pointer;" onclick="location.reload()">Cancel</p>
             </div>
 
             <div id="input-section">
-                <div class="payment-tabs">
-                    <div class="tab active" id="tab-upi" onclick="switchMethod('upi')">UPI Apps</div>
-                    <div class="tab" id="tab-card" onclick="switchMethod('card')">Card</div>
+                <div class="upi-grid">
+                    <label class="upi-option"><input type="radio" name="upi-app" checked> <span>Google Pay</span></label>
+                    <label class="upi-option"><input type="radio" name="upi-app"> <span>PhonePe</span></label>
+                    <label class="upi-option"><input type="radio" name="upi-app"> <span>Paytm</span></label>
+                    <label class="upi-option"><input type="radio" name="upi-app"> <span>BHIM Pay</span></label>
                 </div>
-                
-                <div id="section-upi">
-                    <div class="upi-grid">
-                        <label class="upi-option">
-                            <input type="radio" name="upi-app" value="Google Pay" checked>
-                            <span>Google Pay</span>
-                        </label>
-                        <label class="upi-option">
-                            <input type="radio" name="upi-app" value="PhonePe">
-                            <span>PhonePe</span>
-                        </label>
-                        <label class="upi-option">
-                            <input type="radio" name="upi-app" value="Paytm">
-                            <span>Paytm</span>
-                        </label>
-                        <label class="upi-option">
-                            <input type="radio" name="upi-app" value="BHIM Pay">
-                            <span>BHIM Pay</span>
-                        </label>
-                    </div>
-                    <input type="text" id="upi-id" placeholder="Or enter your UPI ID for request">
-                </div>
-
-                <div id="section-card" class="hidden">
-                    <input type="text" placeholder="Cardholder Name">
-                    <input type="text" placeholder="1234 5678 9101 1121" maxlength="19">
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" placeholder="MM/YY" maxlength="5">
-                        <input type="password" placeholder="CVV" maxlength="3">
-                    </div>
-                </div>
-                
+                <input type="text" id="upi-id-input" placeholder="Or enter your UPI ID">
                 <button class="btn-pay" id="pay-button" onclick="processPayment()">Proceed to Pay</button>
             </div>
         </div>
@@ -168,13 +66,7 @@
         import { db, auth } from "./firebase.js";
         import { addDoc, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // ==========================================
-        // ADMIN CONFIGURATION
-        // ==========================================
-        const ADMIN_UPI_ID = "prathamrana2612-1@oksbi"; 
-        const ADMIN_NAME = "Home Assist Admin";
-        // ==========================================
-
+        const ADMIN_UPI = "prathamrana2612-1@oksbi"; // Change this!
         const params = new URLSearchParams(window.location.search);
         const service = params.get('service') || "General Service";
         const price = params.get('price') || "0";
@@ -182,28 +74,12 @@
         document.getElementById('pay-for').innerText = "Service: " + service;
         document.getElementById('pay-amount').innerText = "₹" + price;
 
-        let currentBookingId = null;
-        let unsubscribe = null;
-
-        window.switchMethod = function(method) {
-            document.getElementById('section-upi').classList.toggle('hidden', method !== 'upi');
-            document.getElementById('section-card').classList.toggle('hidden', method !== 'card');
-            document.getElementById('tab-upi').classList.toggle('active', method === 'upi');
-            document.getElementById('tab-card').classList.toggle('active', method === 'card');
-        };
-
         window.processPayment = async function() {
             const user = auth.currentUser;
-            const upiInput = document.getElementById('upi-id').value;
-
-            if (!user) { alert("Please login first."); return; }
+            if (!user) { alert("Please login."); return; }
 
             try {
-                const payBtn = document.getElementById('pay-button');
-                payBtn.disabled = true;
-                payBtn.innerText = "Initializing...";
-
-                // Create record with "pending" status
+                // 1. Create the pending record
                 const docRef = await addDoc(collection(db, "bookings"), {
                     userId: user.uid,
                     userName: user.displayName || "Customer",
@@ -213,53 +89,22 @@
                     time: Date.now()
                 });
 
-                currentBookingId = docRef.id;
+                // 2. Show QR Code
+                document.getElementById('input-section').classList.add('hidden');
+                document.getElementById('qrcode-section').classList.remove('hidden');
+                new QRCode(document.getElementById("qrcode"), {
+                    text: `upi://pay?pa=${ADMIN_UPI}&am=${price}&cu=INR`,
+                    width: 200, height: 200
+                });
 
-                if (upiInput.trim() !== "") {
-                    alert(`Request of ₹${price} sent to ${upiInput}. Redirecting after you pay.`);
-                }
-                
-                generateAdminQR();
-                startPaymentListener(currentBookingId);
-
-            } catch (error) {
-                alert("Error: " + error.message);
-                document.getElementById('pay-button').disabled = false;
-            }
-        };
-
-        function generateAdminQR() {
-            document.getElementById('input-section').classList.add('hidden');
-            document.getElementById('qrcode-section').classList.remove('hidden');
-            
-            const upiUrl = `upi://pay?pa=${ADMIN_UPI_ID}&pn=${encodeURIComponent(ADMIN_NAME)}&am=${price}&cu=INR&tn=${encodeURIComponent(service)}`;
-            
-            document.getElementById("qrcode").innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), {
-                text: upiUrl,
-                width: 200,
-                height: 200
-            });
-        }
-
-        function startPaymentListener(bookingId) {
-            if (unsubscribe) unsubscribe();
-            
-            unsubscribe = onSnapshot(doc(db, "bookings", bookingId), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().status === "paid") {
-                    unsubscribe();
-                    alert("Payment Successful! SMS Sent: Thank you for choosing our service.");
-                    window.location.href = "index.html"; 
-                }
-            });
-        }
-
-        window.resetUI = function() {
-            if (unsubscribe) unsubscribe();
-            document.getElementById('input-section').classList.remove('hidden');
-            document.getElementById('qrcode-section').classList.add('hidden');
-            document.getElementById('pay-button').disabled = false;
-            document.getElementById('pay-button').innerText = "Proceed to Pay";
+                // 3. Start Listening for your update in Firebase
+                onSnapshot(doc(db, "bookings", docRef.id), (docSnap) => {
+                    if (docSnap.exists() && docSnap.data().status === "paid") {
+                        alert("Payment Successful! SMS Sent: Thank you for choosing our service.");
+                        window.location.href = "index.html"; // Redirect to account/home
+                    }
+                });
+            } catch (e) { alert(e.message); }
         };
     </script>
 </body>

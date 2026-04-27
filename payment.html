@@ -61,7 +61,6 @@
         .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-size: 14px; color: #64748b; border-bottom: 2px solid transparent; }
         .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: 600; }
 
-        /* FIXED ALIGNMENT CSS */
         .upi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
         .upi-option { 
             border: 1px solid #e2e8f0; 
@@ -69,20 +68,11 @@
             border-radius: 8px; 
             display: flex; 
             align-items: center; 
-            justify-content: center; /* Centers items in the box */
+            justify-content: center; 
             gap: 12px; 
             cursor: pointer; 
-            transition: 0.2s; 
         }
-        .upi-option:hover { border-color: var(--primary); background: #f8faff; }
-        .upi-option input { width: auto; margin: 0; cursor: pointer; }
-        .upi-option label { 
-            font-size: 14px; 
-            cursor: pointer; 
-            width: 80px; /* Fixed width ensures names start at the same point */
-            text-align: left;
-            font-weight: 500;
-        }
+        .upi-option span { font-size: 14px; font-weight: 500; width: 80px; text-align: left; }
         
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; }
         
@@ -93,15 +83,17 @@
             border-radius: 12px;
             margin-bottom: 20px;
         }
-        #qrcode {
-            display: flex;
-            justify-content: center;
-            margin: 15px 0;
-        }
+        #qrcode { display: flex; justify-content: center; margin: 15px 0; }
 
         .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
         .btn-pay:disabled { background: #94a3b8; cursor: not-allowed; }
         .hidden { display: none; }
+
+        .loading-dots:after {
+            content: ' .';
+            animation: dots 1s steps(5, end) infinite;
+        }
+        @keyframes dots { 0%, 20% { content: ' .'; } 40% { content: ' . .'; } 60% { content: ' . . .'; } }
     </style>
 </head>
 <body>
@@ -125,9 +117,9 @@
             <div id="qrcode-section" class="hidden">
                 <p style="font-size: 14px; font-weight: 600;">Scan with any UPI App</p>
                 <div id="qrcode"></div>
-                <p style="font-size: 12px; color: #64748b;">Pay exactly <strong id="qr-total-display"></strong></p>
-                <button class="btn-pay" onclick="confirmPaymentRecord()">I have completed the payment</button>
-                <p style="font-size: 11px; margin-top: 10px; color: #ef4444; cursor: pointer;" onclick="resetUI()">Cancel / Change Method</p>
+                <p style="font-size: 13px; color: #2563eb; font-weight: 600;" class="loading-dots">Waiting for payment confirmation</p>
+                <p style="font-size: 11px; color: #64748b; margin-top: 10px;">The page will automatically redirect once the admin receives your payment.</p>
+                <p style="font-size: 11px; margin-top: 15px; color: #ef4444; cursor: pointer; text-decoration: underline;" onclick="resetUI()">Cancel Payment</p>
             </div>
 
             <div id="input-section">
@@ -137,22 +129,21 @@
                 </div>
                 
                 <div id="section-upi">
-                    <p style="font-size: 14px; color: #64748b;">Select your preferred app:</p>
                     <div class="upi-grid">
                         <label class="upi-option">
-                            <input type="radio" name="upi-app" id="gpay" value="Google Pay" checked>
+                            <input type="radio" name="upi-app" value="Google Pay" checked>
                             <span>Google Pay</span>
                         </label>
                         <label class="upi-option">
-                            <input type="radio" name="upi-app" id="phonepe" value="PhonePe">
+                            <input type="radio" name="upi-app" value="PhonePe">
                             <span>PhonePe</span>
                         </label>
                         <label class="upi-option">
-                            <input type="radio" name="upi-app" id="paytm" value="Paytm">
+                            <input type="radio" name="upi-app" value="Paytm">
                             <span>Paytm</span>
                         </label>
                         <label class="upi-option">
-                            <input type="radio" name="upi-app" id="bhim" value="BHIM Pay">
+                            <input type="radio" name="upi-app" value="BHIM Pay">
                             <span>BHIM Pay</span>
                         </label>
                     </div>
@@ -160,8 +151,8 @@
                 </div>
 
                 <div id="section-card" class="hidden">
-                    <input type="text" id="card-name" placeholder="Cardholder Name">
-                    <input type="text" id="card-number" placeholder="1234 5678 9101 1121" maxlength="19">
+                    <input type="text" placeholder="Cardholder Name">
+                    <input type="text" placeholder="1234 5678 9101 1121" maxlength="19">
                     <div style="display:flex; gap:10px;">
                         <input type="text" placeholder="MM/YY" maxlength="5">
                         <input type="password" placeholder="CVV" maxlength="3">
@@ -175,7 +166,7 @@
 
     <script type="module">
         import { db, auth } from "./firebase.js";
-        import { addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { addDoc, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         // ==========================================
         // ADMIN CONFIGURATION
@@ -190,36 +181,50 @@
 
         document.getElementById('pay-for').innerText = "Service: " + service;
         document.getElementById('pay-amount').innerText = "₹" + price;
-        document.getElementById('qr-total-display').innerText = "₹" + price;
 
-        let selectedMethod = 'upi';
+        let currentBookingId = null;
+        let unsubscribe = null;
 
         window.switchMethod = function(method) {
-            selectedMethod = method;
             document.getElementById('section-upi').classList.toggle('hidden', method !== 'upi');
             document.getElementById('section-card').classList.toggle('hidden', method !== 'card');
             document.getElementById('tab-upi').classList.toggle('active', method === 'upi');
             document.getElementById('tab-card').classList.toggle('active', method === 'card');
         };
 
-        window.resetUI = function() {
-            document.getElementById('input-section').classList.remove('hidden');
-            document.getElementById('qrcode-section').classList.add('hidden');
-            document.getElementById("qrcode").innerHTML = "";
-        };
+        window.processPayment = async function() {
+            const user = auth.currentUser;
+            const upiInput = document.getElementById('upi-id').value;
 
-        window.processPayment = function() {
-            const userInputUpi = document.getElementById('upi-id').value;
+            if (!user) { alert("Please login first."); return; }
 
-            if (selectedMethod === 'upi') {
-                if (userInputUpi.trim() !== "") {
-                    alert(`Request of ₹${price} sent to ${userInputUpi}. Check your app.`);
-                    confirmPaymentRecord();
-                } else {
-                    generateAdminQR();
+            try {
+                const payBtn = document.getElementById('pay-button');
+                payBtn.disabled = true;
+                payBtn.innerText = "Initializing...";
+
+                // Create record with "pending" status
+                const docRef = await addDoc(collection(db, "bookings"), {
+                    userId: user.uid,
+                    userName: user.displayName || "Customer",
+                    serviceType: service,
+                    amount: price,
+                    status: "pending",
+                    time: Date.now()
+                });
+
+                currentBookingId = docRef.id;
+
+                if (upiInput.trim() !== "") {
+                    alert(`Request of ₹${price} sent to ${upiInput}. Redirecting after you pay.`);
                 }
-            } else {
-                confirmPaymentRecord();
+                
+                generateAdminQR();
+                startPaymentListener(currentBookingId);
+
+            } catch (error) {
+                alert("Error: " + error.message);
+                document.getElementById('pay-button').disabled = false;
             }
         };
 
@@ -228,7 +233,8 @@
             document.getElementById('qrcode-section').classList.remove('hidden');
             
             const upiUrl = `upi://pay?pa=${ADMIN_UPI_ID}&pn=${encodeURIComponent(ADMIN_NAME)}&am=${price}&cu=INR&tn=${encodeURIComponent(service)}`;
-
+            
+            document.getElementById("qrcode").innerHTML = "";
             new QRCode(document.getElementById("qrcode"), {
                 text: upiUrl,
                 width: 200,
@@ -236,27 +242,24 @@
             });
         }
 
-        window.confirmPaymentRecord = async function() {
-            const user = auth.currentUser;
-            if (!user) { alert("Please login first."); return; }
+        function startPaymentListener(bookingId) {
+            if (unsubscribe) unsubscribe();
+            
+            unsubscribe = onSnapshot(doc(db, "bookings", bookingId), (docSnap) => {
+                if (docSnap.exists() && docSnap.data().status === "paid") {
+                    unsubscribe();
+                    alert("Payment Successful! SMS Sent: Thank you for choosing our service.");
+                    window.location.href = "index.html"; 
+                }
+            });
+        }
 
-            try {
-                let paymentDetail = (selectedMethod === 'upi') ? "UPI (Admin QR)" : "Card";
-                await addDoc(collection(db, "bookings"), {
-                    userId: user.uid,
-                    userName: user.displayName || "Customer",
-                    serviceType: service,
-                    amount: price,
-                    paymentMethod: paymentDetail,
-                    status: "paid",
-                    time: Date.now()
-                });
-
-                alert("Payment successful! Thank you for choosing our service.");
-                window.location.href = "index.html"; 
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
+        window.resetUI = function() {
+            if (unsubscribe) unsubscribe();
+            document.getElementById('input-section').classList.remove('hidden');
+            document.getElementById('qrcode-section').classList.add('hidden');
+            document.getElementById('pay-button').disabled = false;
+            document.getElementById('pay-button').innerText = "Proceed to Pay";
         };
     </script>
 </body>

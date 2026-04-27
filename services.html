@@ -6,16 +6,30 @@
   <title>Our Services | Home Assist</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    :root { --primary: #2563eb; --bg: #f8fafc; }
-    body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+    :root { --primary: #2563eb; --bg: #f8fafc; --accent: #1e40af; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 20px; padding-bottom: 100px; }
     .header { text-align: center; margin-bottom: 40px; }
     .header h1 { color: var(--primary); margin-bottom: 5px; }
+    
     .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-    .service-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: 0.3s; border: 1px solid #e2e8f0; }
-    .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-    .tag { background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    .price { font-size: 1.2rem; font-weight: 700; color: #1e293b; margin: 15px 0; }
-    .btn-book { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+    .service-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+    
+    .tag { background: #dbeafe; color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    h3 { margin: 15px 0 10px 0; color: #1e293b; }
+
+    /* Task Selection Styles */
+    .task-list { list-style: none; padding: 0; margin: 15px 0; }
+    .task-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+    .task-item:last-child { border-bottom: none; }
+    .task-item input { margin-right: 10px; width: 18px; height: 18px; cursor: pointer; }
+    .task-price { font-weight: 600; color: #64748b; }
+
+    /* Bottom Bar for Total */
+    .booking-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); display: flex; justify-content: center; z-index: 1000; }
+    .bar-content { width: 100%; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; }
+    .total-display { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
+    .btn-book { background: var(--primary); color: white; border: none; padding: 12px 40px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+    .btn-book:hover { background: var(--accent); }
     .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary); text-decoration: none; font-weight: 500; }
   </style>
 </head>
@@ -25,48 +39,110 @@
     <a href="index.html" class="back-link">← Back to Home</a>
     <div class="header">
       <h1>Available Services</h1>
-      <p id="search-status">Showing all available experts</p>
+      <p>Select the tasks you need help with</p>
     </div>
 
     <div class="services-grid">
       <div class="service-card">
         <span class="tag">Plumbing</span>
-        <h3>Professional Pipe Repair</h3>
-        <p>Expert fix for leakages, blockages, and tap installations.</p>
-        <div class="price">Starting at ₹199</div>
-        <button class="btn-book" onclick="bookNow('Plumber')">Book Now</button>
+        <h3>Plumbing Services</h3>
+        <div class="task-list">
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="199" data-name="Leakage Repair"> Leakage Repair</span>
+            <span class="task-price">₹199</span>
+          </label>
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="149" data-name="Tap Installation"> Tap Installation</span>
+            <span class="task-price">₹149</span>
+          </label>
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="299" data-name="Blockage Clearing"> Blockage Clearing</span>
+            <span class="task-price">₹299</span>
+          </label>
+        </div>
       </div>
 
       <div class="service-card">
         <span class="tag">Electrical</span>
-        <h3>Electrical Maintenance</h3>
-        <p>Short circuit repairs, wiring, and appliance installation.</p>
-        <div class="price">Starting at ₹249</div>
-        <button class="btn-book" onclick="bookNow('Electrician')">Book Now</button>
+        <h3>Electrical Works</h3>
+        <div class="task-list">
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="249" data-name="Short Circuit Fix"> Short Circuit Fix</span>
+            <span class="task-price">₹249</span>
+          </label>
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="399" data-name="Appliance Install"> Appliance Install</span>
+            <span class="task-price">₹399</span>
+          </label>
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="199" data-name="Switchboard Repair"> Switchboard Repair</span>
+            <span class="task-price">₹199</span>
+          </label>
+        </div>
       </div>
 
       <div class="service-card">
         <span class="tag">Cooling</span>
-        <h3>AC Service & Repair</h3>
-        <p>Deep cleaning, gas refilling, and troubleshooting.</p>
-        <div class="price">Starting at ₹499</div>
-        <button class="btn-book" onclick="bookNow('AC Repair')">Book Now</button>
+        <h3>AC Services</h3>
+        <div class="task-list">
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="499" data-name="Deep Cleaning"> Deep Cleaning</span>
+            <span class="task-price">₹499</span>
+          </label>
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="800" data-name="Gas Refilling"> Gas Refilling</span>
+            <span class="task-price">₹800</span>
+          </label>
+        </div>
       </div>
 
       <div class="service-card">
         <span class="tag">Cleaning</span>
-        <h3>Full House Deep Cleaning</h3>
-        <p>Sanitization and deep cleaning for all rooms.</p>
-        <div class="price">Starting at ₹999</div>
-        <button class="btn-book" onclick="bookNow('Cleaning')">Book Now</button>
+        <h3>Home Cleaning</h3>
+        <div class="task-list">
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="999" data-name="Full House Deep Clean"> Full House Clean</span>
+            <span class="task-price">₹999</span>
+          </label>
+          <label class="task-item">
+            <span><input type="checkbox" class="service-check" data-price="499" data-name="Kitchen Cleaning"> Kitchen Cleaning</span>
+            <span class="task-price">₹499</span>
+          </label>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <div class="booking-bar">
+    <div class="bar-content">
+      <div class="total-display">Total: ₹<span id="grand-total">0</span></div>
+      <button class="btn-book" onclick="processBooking()">Book Selected Services</button>
     </div>
   </div>
 
  <script type="module">
   import { auth } from "./firebase.js";
 
-  window.bookNow = function(serviceName) {
+  const checkboxes = document.querySelectorAll('.service-check');
+  const totalDisplay = document.getElementById('grand-total');
+
+  // Function to calculate total price
+  function updateTotal() {
+      let total = 0;
+      checkboxes.forEach(cb => {
+          if (cb.checked) {
+              total += parseInt(cb.dataset.price);
+          }
+      });
+      totalDisplay.innerText = total;
+  }
+
+  // Add event listener to every checkbox
+  checkboxes.forEach(cb => {
+      cb.addEventListener('change', updateTotal);
+  });
+
+  window.processBooking = function() {
       const user = auth.currentUser;
       
       if (!user) {
@@ -75,16 +151,23 @@
           return;
       }
 
-      const prices = {
-          'Plumber': '199',
-          'Electrician': '249',
-          'AC Repair': '499',
-          'Cleaning': '999'
-      };
+      let selectedServices = [];
+      let finalPrice = 0;
 
-      const selectedPrice = prices[serviceName] || "0";
-      const serviceParam = encodeURIComponent(serviceName);
-      window.location.assign(`payment.html?service=${serviceParam}&price=${selectedPrice}`);
+      checkboxes.forEach(cb => {
+          if (cb.checked) {
+              selectedServices.push(cb.dataset.name);
+              finalPrice += parseInt(cb.dataset.price);
+          }
+      });
+
+      if (selectedServices.length === 0) {
+          alert("Please select at least one service to continue.");
+          return;
+      }
+
+      const serviceParam = encodeURIComponent(selectedServices.join(", "));
+      window.location.assign(`payment.html?service=${serviceParam}&price=${finalPrice}`);
   };
  </script>
 </body>

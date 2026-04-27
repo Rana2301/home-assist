@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home Assist | Luxury Home Services</title>
+  
+  <link rel="icon" type="image/png" href="logo.png.png">
+  
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -66,13 +69,11 @@
       color: var(--uc-dark);
     }
 
-    .assist-highlight {
-      color: var(--uc-brand);
-    }
+    .assist-highlight { color: var(--uc-brand); }
 
     /* Hero Styling */
     .hero-container {
-      padding: 180px 20px 80px;
+      padding: 180px 20px 120px;
       background: radial-gradient(circle at top right, #f5f3ff, #ffffff);
       text-align: center;
     }
@@ -87,17 +88,17 @@
     }
 
     .hero-title {
-      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-size: clamp(2.5rem, 6vw, 4rem);
       font-weight: 800;
       letter-spacing: -1px;
       margin-bottom: 15px;
       margin-top: 0;
-      line-height: 1.2;
+      line-height: 1.1;
     }
 
     .search-pill {
       background: white;
-      max-width: 800px;
+      max-width: 700px;
       margin: 40px auto;
       padding: 8px;
       border-radius: 50px;
@@ -113,23 +114,38 @@
       box-shadow: 0 15px 50px rgba(103, 58, 183, 0.1);
     }
 
+    /* Sections Shared */
+    .section-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 20px;
+    }
+
+    .section-header {
+      margin-bottom: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    /* Service Grid */
     .service-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 25px;
-      max-width: 1100px;
-      margin: -40px auto 60px;
-      padding: 0 20px;
+      margin-top: -60px;
+      position: relative;
+      z-index: 10;
     }
 
     .service-card {
       background: white;
-      padding: 30px 20px;
-      border-radius: 24px;
+      padding: 40px 30px;
+      border-radius: 28px;
       text-align: center;
       cursor: pointer;
       transition: var(--transition);
-      border: 1px solid #f8fafc;
+      border: 1px solid #f1f5f9;
       box-shadow: var(--card-shadow);
     }
 
@@ -141,7 +157,74 @@
 
     .service-card:hover p { color: rgba(255,255,255,0.8); }
 
-    .icon-wrap { font-size: 40px; margin-bottom: 15px; }
+    .icon-wrap { font-size: 48px; margin-bottom: 20px; }
+
+    /* Trending Section */
+    .trending-scroll {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 20px 5px;
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .trending-scroll::-webkit-scrollbar { display: none; }
+
+    .trending-item {
+      min-width: 280px;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #f1f5f9;
+      transition: var(--transition);
+    }
+
+    .trending-item:hover { transform: scale(1.03); box-shadow: var(--card-shadow); }
+
+    .trending-img {
+      height: 160px;
+      background: #eee;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .trending-content { padding: 20px; }
+
+    /* Footer */
+    footer {
+      background: var(--uc-dark);
+      color: white;
+      padding: 80px 20px 40px;
+      margin-top: 60px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-col h4 { margin-bottom: 25px; font-size: 18px; color: #fff; }
+    .footer-col ul { list-style: none; padding: 0; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { color: #94a3b8; text-decoration: none; transition: 0.3s; font-size: 14px; }
+    .footer-col a:hover { color: var(--uc-brand); padding-left: 5px; }
+
+    .copyright {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .navbar nav { display: none !important; }
+    }
 
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-thumb { background: var(--uc-brand); border-radius: 10px; }
@@ -175,41 +258,117 @@
           Expert help for <br>
           <span id="dynamic-text" style="color:var(--uc-brand); transition: opacity 0.4s;">every home need.</span>
         </h1>
-        <p style="color:var(--uc-text-muted); font-size:18px;">Quality services delivered to your doorstep in Bharuch.</p>
+        <p style="color:var(--uc-text-muted); font-size:18px;">Reliable & premium home services in Bharuch.</p>
         
         <div class="search-pill">
-          <input type="text" placeholder="What are you looking for?" style="flex:1; border:none; padding:15px 25px; outline:none; font-size:16px; background:transparent;">
+          <input type="text" placeholder="Search for AC repair, cleaning, etc." style="flex:1; border:none; padding:15px 25px; outline:none; font-size:16px; background:transparent;">
           <button style="background:var(--uc-brand); color:white; border:none; padding:12px 35px; border-radius:40px; font-weight:600; cursor:pointer;">Find Expert</button>
         </div>
       </div>
     </section>
 
-    <section class="service-grid">
-      <div class="service-card">
-        <div class="icon-wrap">🚰</div>
-        <h3 style="margin:10px 0;">Plumbing</h3>
-        <p style="font-size:12px; color:var(--uc-text-muted);">Starting at ₹149.</p>
+    <div class="section-container">
+      <div class="service-grid">
+        <div class="service-card">
+          <div class="icon-wrap">🚰</div>
+          <h3 style="margin:10px 0;">Plumbing</h3>
+          <p style="font-size:14px; color:var(--uc-text-muted);">Starts at ₹149</p>
+        </div>
+        <div class="service-card">
+          <div class="icon-wrap">⚡</div>
+          <h3 style="margin:10px 0;">Electrical</h3>
+          <p style="font-size:14px; color:var(--uc-text-muted);">Certified Techs</p>
+        </div>
+        <div class="service-card">
+          <div class="icon-wrap">❄️</div>
+          <h3 style="margin:10px 0;">AC Repair</h3>
+          <p style="font-size:14px; color:var(--uc-text-muted);">Rapid Cooling Fix</p>
+        </div>
+        <div class="service-card">
+          <div class="icon-wrap">🧹</div>
+          <h3 style="margin:10px 0;">Cleaning</h3>
+          <p style="font-size:14px; color:var(--uc-text-muted);">Eco-Friendly</p>
+        </div>
       </div>
+    </div>
 
-      <div class="service-card">
-        <div class="icon-wrap">⚡</div>
-        <h3 style="margin:10px 0;">Electrical</h3>
-        <p style="font-size:12px; color:var(--uc-text-muted);">Wiring & Repairs.</p>
-      </div>
+    <section class="section-container" style="background: #f8fafc; max-width: 100%;">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div class="section-header">
+          <div>
+            <h2 style="margin:0; font-size: 28px;">Trending in <span class="assist-highlight">Bharuch</span></h2>
+            <p style="color: var(--uc-text-muted); margin-top: 5px;">The most booked services this week.</p>
+          </div>
+          <a href="#" style="color: var(--uc-brand); font-weight: 600; text-decoration: none;">View All →</a>
+        </div>
 
-      <div class="service-card">
-        <div class="icon-wrap">❄️</div>
-        <h3 style="margin:10px 0;">AC Repair</h3>
-        <p style="font-size:12px; color:var(--uc-text-muted);">Gas refilling & Cleaning.</p>
-      </div>
-
-      <div class="service-card">
-        <div class="icon-wrap">🧹</div>
-        <h3 style="margin:10px 0;">Cleaning</h3>
-        <p style="font-size:12px; color:var(--uc-text-muted);">Deep home sanitation.</p>
+        <div class="trending-scroll">
+          <div class="trending-item">
+             <div class="trending-img" style="background: linear-gradient(45deg, #ddd, #eee); display: flex; align-items: center; justify-content: center; font-size: 40px;">🛋️</div>
+             <div class="trending-content">
+               <h4 style="margin:0;">Sofa Deep Cleaning</h4>
+               <p style="color: var(--uc-text-muted); font-size: 13px;">Free sanitization included</p>
+               <div style="font-weight: 800; color: var(--uc-brand);">₹499 <span style="font-size: 11px; text-decoration: line-through; color: #cbd5e1;">₹799</span></div>
+             </div>
+          </div>
+          <div class="trending-item">
+             <div class="trending-img" style="background: linear-gradient(45deg, #673ab7, #9575cd); display: flex; align-items: center; justify-content: center; font-size: 40px;">💅</div>
+             <div class="trending-content">
+               <h4 style="margin:0;">Salon at Home</h4>
+               <p style="color: var(--uc-text-muted); font-size: 13px;">Premium products only</p>
+               <div style="font-weight: 800; color: var(--uc-brand);">₹899 <span style="font-size: 11px; text-decoration: line-through; color: #cbd5e1;">₹1200</span></div>
+             </div>
+          </div>
+          <div class="trending-item">
+             <div class="trending-img" style="background: linear-gradient(45deg, #0ea5e9, #7dd3fc); display: flex; align-items: center; justify-content: center; font-size: 40px;">🚿</div>
+             <div class="trending-content">
+               <h4 style="margin:0;">Geyser Repair</h4>
+               <p style="color: var(--uc-text-muted); font-size: 13px;">Instant 60-min arrival</p>
+               <div style="font-weight: 800; color: var(--uc-brand);">₹249 <span style="font-size: 11px; text-decoration: line-through; color: #cbd5e1;">₹450</span></div>
+             </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h2 style="color:white; margin:0 0 15px 0;">Home<span class="assist-highlight">Assist</span></h2>
+        <p style="color:#94a3b8; font-size: 14px; line-height: 1.6;">Providing high-quality home maintenance and lifestyle services to families in Bharuch since 2024.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Kitchen Cleaning</a></li>
+          <li><a href="#">Home Painting</a></li>
+          <li><a href="#">Pest Control</a></li>
+          <li><a href="#">Electricians</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="contact.html">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Partner with us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      &copy; 2026 HomeAssist India. All rights reserved. Made for Bharuch.
+    </div>
+  </footer>
 
   <script>
     const phrases = ["every home need.", "busy weekends.", "broken pipes.", "sparking wires."];

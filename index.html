@@ -6,42 +6,30 @@
   <title>Home Assist | Luxury Home Services</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
-    /* [Insert Global CSS from Section 1 here] */
-:root {
-  --uc-brand: #673ab7; /* Urban Company Signature Purple */
-  --uc-dark: #0f172a;
-  --uc-text-muted: #64748b;
-  --glass: rgba(255, 255, 255, 0.8);
-  --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    :root {
+      --uc-brand: #673ab7; 
+      --uc-dark: #0f172a;
+      --uc-text-muted: #64748b;
+      --glass: rgba(255, 255, 255, 0.8);
+      --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #fcfcfd;
-  color: var(--uc-dark);
-  margin: 0;
-  overflow-x: hidden;
-}
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #fcfcfd;
+      color: var(--uc-dark);
+      margin: 0;
+      overflow-x: hidden;
+    }
 
-/* New Animation Keyframes */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(50px); }
-  to { opacity: 1; transform: translateX(0); }
-}
+    .animate-fade-up { animation: fadeInUp 0.8s ease-out forwards; }
 
-@keyframes pulse-soft {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
-}
-
-.animate-fade-up { animation: fadeInUp 0.8s ease-out forwards; }
     /* Floating Navigation */
     .navbar {
       background: var(--glass);
@@ -56,13 +44,42 @@ body {
       border: 1px solid rgba(255,255,255,0.3);
       box-shadow: var(--card-shadow);
       padding: 12px 30px;
+      transition: var(--transition);
     }
 
-    /* Hero with Dynamic Search */
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      background: var(--uc-brand);
+      color: white;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 20px;
+    }
+
+    /* Hero Styling */
     .hero-container {
-      padding: 160px 20px 80px;
+      padding: 180px 20px 80px;
       background: radial-gradient(circle at top right, #f5f3ff, #ffffff);
       text-align: center;
+    }
+
+    .tagline-hindi {
+      display: block;
+      font-size: 1.2rem;
+      color: var(--uc-brand);
+      margin-bottom: 10px;
+      font-weight: 600;
+      opacity: 0.9;
     }
 
     .hero-title {
@@ -70,7 +87,8 @@ body {
       font-weight: 800;
       letter-spacing: -1px;
       margin-bottom: 15px;
-      color: var(--uc-dark);
+      margin-top: 0;
+      line-height: 1.2;
     }
 
     .search-pill {
@@ -91,7 +109,6 @@ body {
       box-shadow: 0 15px 50px rgba(103, 58, 183, 0.1);
     }
 
-    /* Interactive Service Cards */
     .service-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -115,18 +132,14 @@ body {
     .service-card:hover {
       background: var(--uc-brand);
       transform: translateY(-12px);
+      color: white;
     }
 
-    .service-card:hover h3, .service-card:hover p { color: white; }
-    .service-card .icon-wrap {
-      font-size: 40px;
-      margin-bottom: 15px;
-      transition: var(--transition);
-    }
+    .service-card:hover p { color: rgba(255,255,255,0.8); }
 
-    /* Custom Scrollbar */
+    .icon-wrap { font-size: 40px; margin-bottom: 15px; }
+
     ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #f1f1f1; }
     ::-webkit-scrollbar-thumb { background: var(--uc-brand); border-radius: 10px; }
   </style>
 </head>
@@ -134,9 +147,13 @@ body {
 
   <header class="navbar">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <a href="index.html" style="text-decoration:none; font-size:22px; font-weight:800; color:var(--uc-brand);">
-        HomeAssist<span style="color:var(--uc-dark);">.</span>
+      <a href="index.html" class="logo-container">
+        <div class="logo-icon">H</div>
+        <span style="font-size:22px; font-weight:800; color:var(--uc-brand);">
+          HomeAssist<span style="color:var(--uc-dark);">.</span>
+        </span>
       </a>
+
       <nav style="display:flex; gap:30px; align-items:center;">
         <a href="about.html" style="text-decoration:none; color:var(--uc-text-muted); font-weight:600; font-size:14px;">About</a>
         <a href="contact.html" style="text-decoration:none; color:var(--uc-text-muted); font-weight:600; font-size:14px;">Support</a>
@@ -148,7 +165,12 @@ body {
   <main>
     <section class="hero-container">
       <div class="animate-fade-up">
-        <h1 class="hero-title">Expert help for <br><span id="dynamic-text" style="color:var(--uc-brand);">every home need.</span></h1>
+        <span class="tagline-hindi">घर की हर ज़रूरत, अब एक ही जगह</span>
+        
+        <h1 class="hero-title">
+          Expert help for <br>
+          <span id="dynamic-text" style="color:var(--uc-brand); transition: opacity 0.4s;">every home need.</span>
+        </h1>
         <p style="color:var(--uc-text-muted); font-size:18px;">Quality services delivered to your doorstep in Bharuch.</p>
         
         <div class="search-pill">
@@ -159,25 +181,25 @@ body {
     </section>
 
     <section class="service-grid">
-      <div class="service-card" style="animation-delay: 0.1s;">
+      <div class="service-card">
         <div class="icon-wrap">🚰</div>
         <h3 style="margin:10px 0;">Plumbing</h3>
         <p style="font-size:12px; color:var(--uc-text-muted);">Starting at ₹149.</p>
       </div>
 
-      <div class="service-card" style="animation-delay: 0.2s;">
+      <div class="service-card">
         <div class="icon-wrap">⚡</div>
         <h3 style="margin:10px 0;">Electrical</h3>
         <p style="font-size:12px; color:var(--uc-text-muted);">Wiring & Repairs.</p>
       </div>
 
-      <div class="service-card" style="animation-delay: 0.3s;">
+      <div class="service-card">
         <div class="icon-wrap">❄️</div>
         <h3 style="margin:10px 0;">AC Repair</h3>
         <p style="font-size:12px; color:var(--uc-text-muted);">Gas refilling & Cleaning.</p>
       </div>
 
-      <div class="service-card" style="animation-delay: 0.4s;">
+      <div class="service-card">
         <div class="icon-wrap">🧹</div>
         <h3 style="margin:10px 0;">Cleaning</h3>
         <p style="font-size:12px; color:var(--uc-text-muted);">Deep home sanitation.</p>
@@ -186,7 +208,6 @@ body {
   </main>
 
   <script>
-    // Dynamic text cycler
     const phrases = ["every home need.", "busy weekends.", "broken pipes.", "sparking wires."];
     let i = 0;
     const textEl = document.getElementById('dynamic-text');
@@ -200,7 +221,6 @@ body {
       }, 400);
     }, 3000);
 
-    // Scroll effect for Navbar
     window.onscroll = () => {
       const nav = document.querySelector('.navbar');
       if (window.scrollY > 50) {

@@ -4,112 +4,343 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="favicon.png.png">
-  <title>Reset Password | Home Assist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Secure Reset | Home Assist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     :root { 
       --primary: #2563eb; 
+      --primary-dark: #1d4ed8;
+      --glass-bg: rgba(255, 255, 255, 0.9);
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --primary-blue: #2563eb;
+      --dark-slate: #1e293b;
+      --glass-white: rgba(255, 255, 255, 0.85);
     }
 
     body { 
       font-family: 'Poppins', sans-serif; 
-      background: #f8fafc; 
+      background: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.1) 0, transparent 50%), 
+                  radial-gradient(at 50% 0%, rgba(37, 99, 235, 0.05) 0, transparent 50%), 
+                  radial-gradient(at 100% 0%, rgba(37, 99, 235, 0.1) 0, transparent 50%),
+                  #f8fafc; 
       margin: 0; 
       display: flex; 
       flex-direction: column;
       min-height: 100vh; 
     }
 
-    /* Header styling based on image_100eba.png */
-    .header {
-      padding: 15px 30px;
+    /* --- UNIQUE FLOATING HEADER STYLES --- */
+    .unique-header {
+      position: sticky;
+      top: 15px;
+      z-index: 1000;
+      margin: 0 5%;
+      padding: 12px 30px;
+      background: var(--glass-white);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+      transition: all 0.3s ease;
+    }
+
+    .unique-header.scrolled {
+      top: 0;
+      margin: 0;
+      width: 100%;
+      border-radius: 0;
+      padding: 8px 5%;
       background: white;
-      display: flex;
-      align-items: center;
-      border-bottom: 4px solid var(--primary); /* Blue line from screenshot */
     }
 
-    .logo-container {
+    .logo-group {
       display: flex;
       align-items: center;
+      gap: 10px;
       text-decoration: none;
-      gap: 12px;
     }
 
-    .logo-img {
-      width: 45px;
-      height: 45px;
-      object-fit: contain;
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      transition: transform 0.3s ease;
     }
 
-    .logo-text { 
-      font-size: 32px; /* Increased to match large header text */
-      font-weight: 700; 
-      color: var(--primary); 
+    .logo-group:hover .logo-icon {
+      transform: rotate(-10deg) scale(1.1);
     }
 
-    /* Centering the Auth Card */
+    .brand-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--dark-slate);
+    }
+
+    .brand-name span { color: var(--primary-blue); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .support-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .support-link:hover { color: var(--primary-blue); }
+
+    .emergency-btn {
+      background: var(--primary-blue);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
+      transition: all 0.3s ease;
+    }
+
+    .emergency-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.23);
+    }
+
+    /* --- AUTH CARD STYLES --- */
     .main-content {
       flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 2rem;
     }
 
     .auth-card { 
-      background: white; 
-      padding: 30px; 
-      border-radius: 15px; 
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      padding: 40px; 
+      border-radius: 24px; 
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
       width: 100%; 
-      max-width: 380px; 
+      max-width: 420px; 
+      border: 1px solid rgba(255, 255, 255, 0.5);
     }
 
-    h2 { color: var(--primary); text-align: center; margin-bottom: 10px; }
-    p { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; line-height: 1.5; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
-    button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    .icon-box {
+      width: 60px;
+      height: 60px;
+      background: rgba(37, 99, 235, 0.1);
+      border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 20px;
+      color: var(--primary);
+      font-size: 24px;
+    }
+
+    h2 { color: var(--text-main); text-align: center; margin: 0 0 8px; font-weight: 700; }
+    p { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 30px; line-height: 1.6; }
+
+    .input-group { margin-bottom: 20px; position: relative; }
+    
+    input { 
+      width: 100%; 
+      padding: 14px 16px; 
+      border: 2px solid #e2e8f0; 
+      border-radius: 12px; 
+      box-sizing: border-box; 
+      font-size: 15px; 
+      transition: all 0.3s;
+      outline: none;
+    }
+
+    input:focus { 
+      border-color: var(--primary); 
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); 
+    }
+
+    button { 
+      width: 100%; 
+      padding: 14px; 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      border-radius: 12px; 
+      font-weight: 600; 
+      font-size: 16px;
+      cursor: pointer; 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    }
+
+    button:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    button:disabled { background: #cbd5e1; cursor: not-allowed; }
+
     .hidden { display: none; }
-    .password-container { position: relative; width: 100%; }
-    .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #64748b; }
-    .link-text { display: block; text-align: center; margin-top: 15px; font-size: 13px; color: var(--primary); text-decoration: none; }
+    
+    .password-container { position: relative; }
+    .toggle-password { 
+        position: absolute; 
+        right: 16px; 
+        top: 50%; 
+        transform: translateY(-50%); 
+        cursor: pointer; 
+        color: var(--text-muted); 
+    }
+
+    .link-text { 
+      display: block; 
+      text-align: center; 
+      margin-top: 25px; 
+      font-size: 14px; 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-weight: 500;
+    }
+
+    .link-text:hover { color: var(--primary); }
+
+    /* --- FOOTER STYLES --- */
+    .security-footer {
+      background: #f8fafc;
+      padding: 40px 20px;
+      margin-top: auto;
+      border-top: 1px solid #e2e8f0;
+      text-align: center;
+    }
+
+    .security-badges {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      opacity: 0.6;
+    }
+
+    .badge-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 15px;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .footer-links a:hover { color: var(--primary); }
+
+    .copyright-text {
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    @media (max-width: 480px) {
+      .auth-card { padding: 30px 20px; border-radius: 0; height: auto; max-width: 100%; box-shadow: none; border: none; }
+      .unique-header { margin: 0; width: 100%; border-radius: 0; top: 0; padding: 10px 15px; }
+    }
   </style>
 </head>
 <body>
 
-  <header class="header">
-    <a href="index.html" class="logo-container">
-      <img src="logo.png.png" alt="Home Assist Logo" class="logo-img">
-      <span class="logo-text">Home Assist</span>
+  <header class="unique-header" id="mainHeader">
+    <a href="index.html" class="logo-group">
+      <img src="logo.png.png" alt="Home Assist" class="logo-icon">
+      <span class="brand-name">Home<span>Assist</span></span>
     </a>
+  
+    <div class="nav-actions">
+      <a href="contact.html" class="support-link">Need Help?</a>
+      <a href="login.html" class="emergency-btn">Get Started</a>
+    </div>
   </header>
 
   <div class="main-content">
     <div class="auth-card">
+      <div class="icon-box">🔑</div>
       <h2>Reset Password</h2>
+      
       <div id="step-1">
-        <p>Enter your <b>Email</b> or <b>Mobile Number</b>.</p>
-        <input type="text" id="user-id-input" placeholder="Email or Mobile (+91...)">
-        <button id="send-btn">Send Reset Info</button>
+        <p>No worries! Enter your details below and we'll help you get back in.</p>
+        <div class="input-group">
+          <input type="text" id="user-id-input" placeholder="Email or Mobile (+91...)">
+        </div>
+        <button id="send-btn">Send Recovery Link</button>
       </div>
+
       <div id="step-otp" class="hidden">
-        <p>Enter the 6-digit OTP sent to your phone.</p>
-        <input type="text" id="otp-input" placeholder="Enter 6-Digit OTP" maxlength="6">
-        <button id="verify-btn">Verify OTP</button>
+        <p>Security first. Please enter the 6-digit code sent to your device.</p>
+        <div class="input-group">
+          <input type="text" id="otp-input" placeholder="0 0 0 0 0 0" maxlength="6" style="text-align: center; letter-spacing: 8px; font-weight: 700;">
+        </div>
+        <button id="verify-btn">Verify Code</button>
       </div>
+
       <div id="step-new-pass" class="hidden">
-        <p>Create a new password for your account.</p>
-        <div class="password-container">
-          <input type="password" id="new-pass" placeholder="New Password (min. 6 chars)">
+        <p>Success! Now, let's create a strong new password for your account.</p>
+        <div class="input-group password-container">
+          <input type="password" id="new-pass" placeholder="New Password">
           <span class="toggle-password" id="toggle-new-pass">👁️</span>
         </div>
         <button id="update-btn">Update Password</button>
       </div>
-      <a href="login.html" class="link-text">Back to Login</a>
+
+      <a href="login.html" class="link-text">← Back to Login</a>
     </div>
   </div>
+
+  <footer class="security-footer">
+    <div class="security-badges">
+      <div class="badge-item"><span>🔒</span> 256-bit Encryption</div>
+      <div class="badge-item"><span>🛡️</span> Secure Verification</div>
+      <div class="badge-item"><span>✅</span> Certified Partner</div>
+    </div>
+
+    <div class="footer-links">
+      <a href="help-center.html">Need Help?</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms&condation.html">Terms of Use</a>
+    </div>
+
+    <div class="copyright-text">
+      &copy; 2026 HomeAssist India. Secure Authentication Gateway.
+    </div>
+  </footer>
+
+  <script>
+    // Header Scroll Logic
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('mainHeader');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  </script>
 
   <script type="module">
     import { auth, db } from "./firebase.js";

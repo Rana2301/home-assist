@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, addDoc, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // --- TOGGLE PASSWORD VISIBILITY ---
 window.togglePassword = (id) => {
@@ -26,7 +26,7 @@ window.handleSignup = async () => {
             fullName: name,
             email: email,
             mobile: mobile,
-            password: pass 
+            isAdmin: false // Default to false
         });
         alert("Account created successfully!");
         window.location.href = "login.html";
@@ -54,15 +54,28 @@ window.handleLogin = async () => {
         }
 
         // Firebase Auth login
-        await signInWithEmailAndPassword(auth, loginEmail, pass);
+        const userCredential = await signInWithEmailAndPassword(auth, loginEmail, pass);
+        const user = userCredential.user;
+
+        // --- NEW ADMIN CHECK LOGIC ---
+        // We look for the user document where the 'uid' matches the logged-in user
+        const q = query(collection(db, "users"), where("uid", "==", user.uid));
+        const userSnap = await getDocs(q);
+        
+        let isAdmin = false;
+        userSnap.forEach((uDoc) => {
+            if (uDoc.data().isAdmin === true) isAdmin = true;
+        });
+
         alert("Welcome back!");
-        window.location.href = "index.html"; 
+        
+        if (isAdmin) {
+            window.location.href = "admin.html"; 
+        } else {
+            window.location.href = "index.html"; 
+        }
         
     } catch (e) {
-        if (e.code === 'user-not-found') {
-            alert("You have not registered; please sign up first.");
-        } else {
-            alert("Login error: " + e.message);
-        }
+        alert("Login error: " + e.message);
     }
 };

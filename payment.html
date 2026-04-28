@@ -8,85 +8,197 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --primary: #2563eb; --bg: #f4f7fe; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        :root { 
+            --primary: #2563eb; 
+            --primary-dark: #1e40af;
+            --bg: #f4f7fe; 
+            --accent: #10b981;
+            --glass: rgba(255, 255, 255, 0.9);
+            --footer-bg: #1e293b;
+        }
         
-        /* Updated Header for Logo + Title */
-        .header { padding: 10px 30px; background: white; display: flex; align-items: center; border-bottom: 4px solid var(--primary); }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+            color: #1e293b;
+        }
+        
+        /* --- Unique Floating Header --- */
+        .header-wrapper { position: sticky; top: 0; z-index: 1000; padding: 15px 20px; }
+        .header { 
+            max-width: 1200px; margin: 0 auto; padding: 10px 25px; 
+            background: var(--glass); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
         .logo-container { display: flex; align-items: center; text-decoration: none; gap: 12px; }
-        .logo-img { height: 45px; width: auto; object-fit: contain; }
-        .logo-text { font-size: 28px; font-weight: 700; color: var(--primary); }
+        .logo-img { height: 40px; width: auto; }
+        .logo-text { font-size: 22px; font-weight: 700; color: var(--primary); }
+
+        .status-indicator { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; color: #64748b; }
+        .pulse { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse-green 2s infinite; }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
         
-        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 30px 20px; }
         
-        /* Persistent Card Section */
-        .payment-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 420px; }
-        .service-info { background: #eff6ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid var(--primary); }
-        h2 { color: var(--primary); margin-top: 0; text-align: center; }
+        .payment-card { 
+            background: white; padding: 35px; border-radius: 24px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+            width: 100%; max-width: 480px; 
+        }
+
+        /* Tabs for New Features */
+        .payment-tabs { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; }
+        .tab { 
+            padding: 10px 5px; cursor: pointer; font-weight: 600; color: #94a3b8; 
+            border-bottom: 3px solid transparent; transition: 0.3s; 
+        }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
         
-        .upi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .upi-option { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
-        .upi-option:hover { background: #f8fafc; border-color: var(--primary); }
-        .upi-option input { margin-right: 10px; }
-        .upi-option span { font-size: 13px; font-weight: 500; }
+        .service-info { background: #f8fafc; padding: 15px 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .order-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 8px; }
         
-        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .btn-pay { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; }
+        /* UPI Grid (Restored) */
+        .upi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .upi-option { 
+            border: 2px solid #f1f5f9; padding: 12px; border-radius: 12px; 
+            display: flex; align-items: center; cursor: pointer; transition: 0.2s; 
+        }
+        .upi-option:hover { border-color: var(--primary); background: #eff6ff; }
+        .upi-option input { accent-color: var(--primary); margin-right: 10px; }
+        .upi-option span { font-size: 13px; font-weight: 600; }
         
-        /* Automatic QR & Status Section */
-        #qrcode-section { text-align: center; padding: 20px; background: #fafafa; border-radius: 12px; margin-top: 20px; border: 2px dashed #e2e8f0; }
+        input[type="text"], input[type="password"] { 
+            width: 100%; padding: 14px; margin-bottom: 15px; 
+            border: 2px solid #f1f5f9; border-radius: 12px; 
+            box-sizing: border-box; font-family: inherit;
+        }
+        input:focus { outline: none; border-color: var(--primary); }
+
+        .btn-pay { 
+            width: 100%; padding: 16px; background: var(--primary); 
+            color: white; border: none; border-radius: 12px; 
+            font-weight: 700; cursor: pointer; font-size: 16px; transition: 0.3s;
+        }
+        .btn-pay:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        #qrcode-section { text-align: center; padding: 20px; background: #fff; border-radius: 20px; border: 2px solid #f1f5f9; }
         #qrcode { display: flex; justify-content: center; margin: 15px 0; }
-        .mobile-upi-btn { display: none; background: #10b981; color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 10px; }
         
+        /* Footer */
+        .footer { background: var(--footer-bg); color: #94a3b8; padding: 40px 20px 20px; margin-top: 40px; }
+        .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
+        .footer-h4 { color: white; margin-bottom: 15px; font-size: 16px; }
+        .footer-links { list-style: none; padding: 0; font-size: 14px; line-height: 2; }
+        .footer-links a { color: #94a3b8; text-decoration: none; }
+        .copyright { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #334155; font-size: 12px; }
+
         .hidden { display: none; }
-        .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite; }
+        .loading-dots:after { content: ' .'; animation: dots 1.5s steps(5, end) infinite; }
         @keyframes dots { 0%, 20% { content: ' .'; } 40% { content: ' . .'; } 60% { content: ' . . .'; } }
-        
-        @media (max-width: 600px) { .mobile-upi-btn { display: block; } }
     </style>
 </head>
 <body>
 
-    <header class="header">
-        <a href="index.html" class="logo-container">
-            <img src="favicon.png.png" alt="Home Assist Logo" class="logo-img">
-            <span class="logo-text">Home Assist</span>
-        </a>
-    </header>
+    <div class="header-wrapper">
+        <header class="header">
+            <a href="index.html" class="logo-container">
+                <img src="favicon.png.png" alt="Logo" class="logo-img">
+                <span class="logo-text">Home Assist</span>
+            </a>
+            <div class="status-indicator">
+                <div class="pulse"></div>
+                <span>SECURE CHECKOUT</span>
+            </div>
+        </header>
+    </div>
 
     <div class="main-content">
         <div class="payment-card">
-            <h2>Complete Payment</h2>
-            
             <div class="service-info">
-                <p id="pay-for" style="margin: 0; color: #1e40af;">Service: Loading...</p>
-                <p style="margin: 5px 0 0 0; font-size: 1.2rem;"><strong>Total: <span id="pay-amount">₹0</span></strong></p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span class="order-label">Service</span>
+                        <strong id="pay-for">Loading...</strong>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="order-label">Total</span>
+                        <strong id="pay-amount" style="color: var(--primary); font-size: 1.2rem;">₹0</strong>
+                    </div>
+                </div>
             </div>
 
-            <div id="input-section">
+            <div class="payment-tabs">
+                <div class="tab active" id="tab-upi" onclick="switchMethod('upi')">UPI Payment</div>
+                <div class="tab" id="tab-card" onclick="switchMethod('card')">Credit / Debit Card</div>
+            </div>
+
+            <div id="upi-section">
+                <span class="order-label">Select App</span>
                 <div class="upi-grid">
                     <label class="upi-option"><input type="radio" name="upi-app" checked> <span>Google Pay</span></label>
                     <label class="upi-option"><input type="radio" name="upi-app"> <span>PhonePe</span></label>
                     <label class="upi-option"><input type="radio" name="upi-app"> <span>Paytm</span></label>
-                    <label class="upi-option"><input type="radio" name="upi-app"> <span>BHIM Pay</span></label>
+                    <label class="upi-option"><input type="radio" name="upi-app"> <span>Any UPI</span></label>
                 </div>
-                <input type="text" id="upi-id-input" placeholder="Enter your UPI ID (Optional)">
-                <button class="btn-pay" id="pay-button" onclick="processPayment()">Generate QR to Pay</button>
+                <input type="text" id="upi-id-input" placeholder="Your UPI ID (e.g. name@okhdfc)">
+                <button class="btn-pay" id="pay-button" onclick="processPayment()">Generate Secure QR</button>
+            </div>
+
+            <div id="card-section" class="hidden">
+                <span class="order-label">Card Details</span>
+                <input type="text" id="card-number" placeholder="Card Number" maxlength="19">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" placeholder="MM/YY" style="flex: 1;" maxlength="5">
+                    <input type="password" placeholder="CVV" style="flex: 1;" maxlength="3">
+                </div>
+                <button class="btn-pay" onclick="alert('Card system initializing...')">Pay Securely</button>
             </div>
 
             <div id="qrcode-section" class="hidden">
-                <p style="font-size: 14px; font-weight: 600; margin: 0;">Scan with any UPI App</p>
+                <p style="font-size: 13px; color: #64748b;">Scan with any UPI App</p>
                 <div id="qrcode"></div>
-                
-                <a id="mobile-pay-link" href="#" class="mobile-upi-btn">Open in UPI App</a>
-                
-                <p style="color: #2563eb; font-weight: 600; font-size: 13px; margin-top: 15px;" class="loading-dots">
-                    Awaiting database confirmation
-                </p>
-                <p style="font-size: 11px; color: #ef4444; cursor: pointer; margin-top: 10px;" onclick="location.reload()">Cancel</p>
+                <p class="loading-dots" style="color: var(--primary); font-weight: 700; font-size: 13px;">Verifying payment</p>
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h4 class="footer-h4">Home Assist</h4>
+                <p style="font-size: 13px; line-height: 1.6;">Your trusted partner for home maintenance and repairs. Professional service at your doorstep.</p>
+            </div>
+            <div>
+                <h4 class="footer-h4">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-h4">Support</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Support</a></li>
+                    <li><a href="#">Refunds</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 Home Assist. Powered by Orbis Infosys.
+        </div>
+    </footer>
 
     <script type="module">
         import { db, auth } from "./firebase.js";
@@ -94,50 +206,62 @@
 
         const ADMIN_UPI = "prathamrana2612-1@oksbi"; 
         const params = new URLSearchParams(window.location.search);
-        const service = params.get('service') || "General Service";
+        const service = params.get('service') || "Home Maintenance";
         const price = params.get('price') || "0";
 
-        document.getElementById('pay-for').innerText = "Service: " + service;
+        document.getElementById('pay-for').innerText = service;
         document.getElementById('pay-amount').innerText = "₹" + price;
+
+        // Restore Switch Method
+        window.switchMethod = function(method) {
+            document.getElementById('tab-upi').classList.toggle('active', method === 'upi');
+            document.getElementById('tab-card').classList.toggle('active', method === 'card');
+            document.getElementById('upi-section').classList.toggle('hidden', method === 'card');
+            document.getElementById('card-section').classList.toggle('hidden', method === 'upi');
+            document.getElementById('qrcode-section').classList.add('hidden');
+        };
+
+        // Format Card Number
+        document.getElementById('card-number').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+        });
 
         window.processPayment = async function() {
             const user = auth.currentUser;
-            if (!user) { alert("Please login first."); return; }
+            if (!user) { alert("Please login to continue."); return; }
 
             const payBtn = document.getElementById('pay-button');
-            payBtn.innerText = "Processing...";
             payBtn.disabled = true;
+            payBtn.innerText = "Securing Connection...";
 
             try {
                 const docRef = await addDoc(collection(db, "bookings"), {
                     userId: user.uid,
-                    userName: user.displayName || "Customer",
                     serviceType: service,
                     amount: price,
                     status: "pending",
-                    time: Date.now()
+                    createdAt: new Date().toISOString()
                 });
 
-                const upiLink = `upi://pay?pa=${ADMIN_UPI}&am=${price}&cu=INR&tn=HomeAssist-${docRef.id}`;
+                const upiLink = `upi://pay?pa=${ADMIN_UPI}&pn=HomeAssist&am=${price}&cu=INR&tn=HA-${docRef.id.substring(0,8)}`;
 
+                document.getElementById('upi-section').classList.add('hidden');
                 document.getElementById('qrcode-section').classList.remove('hidden');
-                document.getElementById('mobile-pay-link').href = upiLink;
                 
                 const qrDiv = document.getElementById("qrcode");
                 qrDiv.innerHTML = ""; 
-                new QRCode(qrDiv, { text: upiLink, width: 180, height: 180 });
+                new QRCode(qrDiv, { text: upiLink, width: 200, height: 200 });
 
                 onSnapshot(doc(db, "bookings", docRef.id), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().status === "paid") {
-                        alert("Payment Successful! Your account will reflect this shortly.");
+                        alert("Payment Confirmed!");
                         window.location.href = "index.html";
                     }
                 });
 
             } catch (e) { 
-                alert(e.message); 
+                alert("Error processing request."); 
                 payBtn.disabled = false;
-                payBtn.innerText = "Generate QR to Pay";
             }
         };
     </script>

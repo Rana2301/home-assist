@@ -27,6 +27,40 @@
       overflow: hidden;
     }
 
+    /* Add to terms&condation.html style block */
+@media (max-width: 1024px) {
+  body {
+    display: block; /* Removes flex layout to let content flow */
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .content-area {
+    padding: 80px 20px 40px; /* Space for the top header */
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  /* Added a mobile-only back button since sidebar is hidden */
+  .content-max-width::before {
+    content: '← Back to Home';
+    display: block;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 600px) {
+  .service-grid {
+    grid-template-columns: 1fr; /* Stack legal service descriptions */
+  }
+}
+
+
     /* Sidebar with Logo and Navigation */
     .sidebar {
       width: 320px;

@@ -6,24 +6,52 @@
   <title>Our Services | Home Assist</title>
   <link rel="icon" type="image/png" href="favicon.png.png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
   <style>
-    :root { --primary: #2563eb; --bg: #f8fafc; --accent: #1e40af; }
+    :root { 
+      --primary: #2563eb; 
+      --primary-glow: rgba(37, 99, 235, 0.4);
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      --glass: rgba(255, 255, 255, 0.85);
+      --accent: #1e40af; 
+      --text-main: #1e293b;
+    }
     
+    * { box-sizing: border-box; transition: all 0.3s ease; }
+
     body { 
       font-family: 'Poppins', sans-serif; 
-      background: var(--bg); 
+      background: var(--bg-gradient); 
+      background-attachment: fixed;
       margin: 0; 
-      padding-bottom: 100px; 
+      color: var(--text-main);
+      padding-bottom: 120px; 
     }
 
-    /* Consistent Header Branding */
+    /* Animated Background Blob */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -10%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: var(--primary-glow);
+      filter: blur(100px);
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    /* Header Styling */
     .header-nav {
-      padding: 15px 30px;
-      background: white;
+      padding: 12px 5%;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
       display: flex;
       justify-content: space-between; 
       align-items: center;
-      border-bottom: 4px solid var(--primary);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
       position: sticky;
       top: 0;
       z-index: 1001;
@@ -36,61 +64,148 @@
       gap: 12px;
     }
 
-    .logo-img {
-      width: 45px;
-      height: 45px;
-      object-fit: contain;
-    }
+    .logo-img { width: 40px; height: 40px; object-fit: contain; }
+    .logo-text { font-size: 24px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
 
-    .logo-text { 
-      font-size: 32px; 
-      font-weight: 700; 
-      color: var(--primary); 
-    }
-
-    /* Back to Home Button Styling */
     .btn-back-nav {
       text-decoration: none;
-      background: #f1f5f9;
-      color: #1e293b;
-      padding: 8px 20px;
-      border-radius: 8px;
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 50px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
+      background: white;
       border: 1px solid #e2e8f0;
-      transition: 0.3s;
     }
 
-    .btn-back-nav:hover {
-      background: #e2e8f0;
+    .btn-back-nav:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* Container & Titles */
+    .container { max-width: 1100px; margin: 50px auto; padding: 0 20px; }
+    .page-title { text-align: center; margin-bottom: 50px; }
+    .page-title h1 { font-size: 2.5rem; color: var(--text-main); margin-bottom: 10px; }
+    .page-title p { color: #64748b; font-size: 1.1rem; }
+
+    /* Services Grid & Cards */
+    .services-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+      gap: 25px; 
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
+    .service-card { 
+      background: var(--glass); 
+      backdrop-filter: blur(5px);
+      padding: 30px; 
+      border-radius: 24px; 
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); 
     }
 
-    .page-title { text-align: center; margin-bottom: 40px; }
-    .page-title h1 { color: var(--primary); margin-bottom: 5px; }
-    
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-    .service-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-    
-    .tag { background: #dbeafe; color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    h3 { margin: 15px 0 10px 0; color: #1e293b; }
+    .service-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 35px -10px var(--primary-glow);
+      border-color: var(--primary);
+    }
+
+    .tag { 
+      background: var(--primary); 
+      color: white; 
+      padding: 5px 15px; 
+      border-radius: 50px; 
+      font-size: 11px; 
+      text-transform: uppercase;
+      font-weight: 700; 
+      letter-spacing: 1px;
+    }
+
+    h3 { margin: 20px 0 15px 0; font-size: 1.4rem; }
 
     .task-list { list-style: none; padding: 0; margin: 15px 0; }
-    .task-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
-    .task-item:last-child { border-bottom: none; }
-    .task-item input { margin-right: 10px; width: 18px; height: 18px; cursor: pointer; }
-    .task-price { font-weight: 600; color: #64748b; }
 
-    .booking-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); display: flex; justify-content: center; z-index: 1000; }
-    .bar-content { width: 100%; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; }
-    .total-display { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
-    .btn-book { background: var(--primary); color: white; border: none; padding: 12px 40px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 1rem; }
-    .btn-book:hover { background: var(--accent); }
+    .task-item { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 12px 15px; 
+      margin-bottom: 8px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer; 
+    }
+
+    .task-item:hover { background: white; }
+
+    .task-item input { 
+      margin-right: 12px; 
+      width: 20px; 
+      height: 20px; 
+      accent-color: var(--primary);
+    }
+
+    .task-price { font-weight: 700; color: var(--primary); }
+
+    /* Modern Footer */
+    footer {
+      background: #1e293b;
+      color: white;
+      padding: 60px 5% 120px;
+      margin-top: 100px;
+      border-radius: 40px 40px 0 0;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .footer-section h4 { color: var(--primary); margin-bottom: 20px; }
+    .footer-section p { font-size: 14px; opacity: 0.8; line-height: 1.6; }
+    .social-links { display: flex; gap: 15px; margin-top: 15px; }
+    .social-links a { color: white; font-size: 20px; }
+
+    /* Booking Bar */
+    .booking-bar { 
+      position: fixed; 
+      bottom: 20px; 
+      left: 50%; 
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 800px;
+      background: #1e293b; 
+      padding: 15px 30px; 
+      border-radius: 100px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3); 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      z-index: 1000; 
+    }
+
+    .total-display { font-size: 1.3rem; font-weight: 600; color: white; }
+    .total-display span { color: var(--primary); font-weight: 800; }
+
+    .btn-book { 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      padding: 12px 35px; 
+      border-radius: 50px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      font-size: 1rem; 
+    }
+
+    .btn-book:hover { background: white; color: var(--primary); transform: scale(1.05); }
+
+    @media (max-width: 768px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .booking-bar { flex-direction: column; gap: 15px; border-radius: 20px; bottom: 10px; }
+      .page-title h1 { font-size: 1.8rem; }
+    }
   </style>
 </head>
 <body>
@@ -100,19 +215,19 @@
       <img src="logo.png.png" alt="Home Assist Logo" class="logo-img">
       <span class="logo-text">Home Assist</span>
     </a>
-    <a href="index.html" class="btn-back-nav">← Back to Home</a>
+    <a href="index.html" class="btn-back-nav"><i class="fas fa-arrow-left"></i> Back to Home</a>
   </nav>
 
   <div class="container">
     <div class="page-title">
-      <h1>Available Services</h1>
-      <p>Select the tasks you need help with</p>
+      <h1>Professional Services</h1>
+      <p>Reliable help for your home at the click of a button</p>
     </div>
 
     <div class="services-grid">
       <div class="service-card">
-        <span class="tag">Plumbing</span>
-        <h3>Plumbing Services</h3>
+        <span class="tag"><i class="fas fa-faucet"></i> Plumbing</span>
+        <h3>Plumbing Solutions</h3>
         <div class="task-list">
           <label class="task-item">
             <span><input type="checkbox" class="service-check" data-price="199" data-name="Leakage Repair"> Leakage Repair</span>
@@ -130,7 +245,7 @@
       </div>
 
       <div class="service-card">
-        <span class="tag">Electrical</span>
+        <span class="tag"><i class="fas fa-bolt"></i> Electrical</span>
         <h3>Electrical Works</h3>
         <div class="task-list">
           <label class="task-item">
@@ -149,8 +264,8 @@
       </div>
 
       <div class="service-card">
-        <span class="tag">Cooling</span>
-        <h3>AC Services</h3>
+        <span class="tag"><i class="fas fa-snowflake"></i> Cooling</span>
+        <h3>AC Maintenance</h3>
         <div class="task-list">
           <label class="task-item">
             <span><input type="checkbox" class="service-check" data-price="499" data-name="Deep Cleaning"> Deep Cleaning</span>
@@ -164,7 +279,7 @@
       </div>
 
       <div class="service-card">
-        <span class="tag">Cleaning</span>
+        <span class="tag"><i class="fas fa-broom"></i> Cleaning</span>
         <h3>Home Cleaning</h3>
         <div class="task-list">
           <label class="task-item">
@@ -180,11 +295,31 @@
     </div>
   </div>
 
-  <div class="booking-bar">
-    <div class="bar-content">
-      <div class="total-display">Total: ₹<span id="grand-total">0</span></div>
-      <button class="btn-book" onclick="processBooking()">Book Selected Services</button>
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Home Assist</h4>
+        <p>Providing top-notch home maintenance services across Bharuch. Quality you can trust, prices you can afford.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <p>About Us<br>Privacy Policy<br>Terms of Service<br>Contact Support</p>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p><i class="fas fa-map-marker-alt"></i> Bharuch, Gujarat, India<br><i class="fas fa-phone"></i> +91 99000 00000</p>
+      </div>
     </div>
+  </footer>
+
+  <div class="booking-bar">
+    <div class="total-display">Selected Total: ₹<span id="grand-total">0</span></div>
+    <button class="btn-book" onclick="processBooking()">Book Now <i class="fas fa-chevron-right"></i></button>
   </div>
 
  <script type="module">

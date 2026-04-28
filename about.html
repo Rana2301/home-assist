@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>About Us | Home Assist - All-in-One Home Services</title>
   
   <link rel="icon" type="image/png" href="logo.png">
@@ -16,6 +16,16 @@
       --text-gray: #64748b;
       --card-bg: #ffffff;
     }
+
+    /* Add to your :root or global styles */
+  html {
+    /* Prevents font boosting in some mobile browsers */
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Use clamp for headings to ensure they don't overflow on small screens */
+  h1 { font-size: clamp(1.8rem, 8vw, 3.5rem); }
+  h2 { font-size: clamp(1.5rem, 6vw, 2.5rem); }
 
     body {
       font-family: 'Poppins', sans-serif;
@@ -170,11 +180,23 @@
       text-align: center;
       font-size: 14px;
     }
+@media (max-width: 480px) {
+  /* Increase padding for mobile comfort */
+  .section-container, .main-content {
+    padding: 40px 15px;
+  }
 
-    @media (max-width: 768px) {
-      .hero-banner h1 { font-size: 2.2rem; }
-      .mission-card { padding: 30px 20px; }
-    }
+  /* Force single column for all grids on small mobile */
+  .service-grid, .ecosystem-grid, .faq-grid, .benefits-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Make buttons full-width for easier thumb-access */
+  .btn-get-started, .apply-btn, .submit-btn, .bento-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
   </style>
 </head>
 <body>

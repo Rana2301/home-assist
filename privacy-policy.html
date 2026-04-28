@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | Home Assist</title>
+  
+  <link rel="icon" type="image/png" href="logo.png.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --uc-brand: #673ab7; 
+      --uc-dark: #0f172a;
+      --uc-text-muted: #64748b;
+      --glass: rgba(255, 255, 255, 0.7);
+      --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #fcfcfd;
+      background-image: radial-gradient(circle at top right, #f5f3ff, #ffffff);
+      color: var(--uc-dark);
+      margin: 0;
+      scroll-behavior: smooth;
+    }
+
+    /* Floating Navbar */
+    .navbar {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      position: fixed;
+      width: 90%;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 20px;
+      z-index: 2000;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 12px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--card-shadow);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo {
+      height: 35px;
+      width: auto;
+    }
+
+    .brand-text { font-weight: 800; font-size: 22px; color: var(--uc-dark); }
+    .assist-highlight { color: var(--uc-brand); }
+
+    /* Policy Layout */
+    .policy-wrapper {
+      max-width: 1100px;
+      margin: 140px auto 80px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      padding: 0 20px;
+    }
+
+    /* Side Navigation */
+    .policy-nav {
+      position: sticky;
+      top: 120px;
+      height: fit-content;
+      background: white;
+      padding: 25px;
+      border-radius: 24px;
+      border: 1px solid #f1f5f9;
+      box-shadow: var(--card-shadow);
+    }
+
+    .policy-nav h4 { margin-top: 0; color: var(--uc-brand); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .nav-item {
+      display: block;
+      padding: 10px 0;
+      color: var(--uc-text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: var(--transition);
+      border-bottom: 1px solid #f8fafc;
+    }
+
+    .nav-item:hover { color: var(--uc-brand); padding-left: 5px; }
+
+    /* Main Policy Content */
+    .policy-content {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      padding: 50px;
+      border-radius: 32px;
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 0 25px 50px -12px rgba(103, 58, 183, 0.1);
+    }
+
+    h1 { font-size: 3rem; font-weight: 800; margin-bottom: 10px; line-height: 1; }
+    .updated-tag { display: inline-block; background: #e0e7ff; color: var(--uc-brand); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 30px; }
+
+    section { margin-bottom: 40px; scroll-margin-top: 120px; }
+    h2 { font-size: 24px; color: var(--uc-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+    h2::before { content: ''; width: 4px; height: 24px; background: var(--uc-brand); border-radius: 10px; }
+
+    p { line-height: 1.8; color: #475569; }
+    ul { padding-left: 20px; color: #475569; }
+    li { margin-bottom: 12px; }
+
+    footer {
+      background: var(--uc-dark);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      border-radius: 40px 40px 0 0;
+    }
+
+    @media (max-width: 900px) {
+      .policy-wrapper { grid-template-columns: 1fr; }
+      .policy-nav { display: none; }
+      .policy-content { padding: 30px; }
+      h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="brand-wrap">
+      <img src="logo.png.png" alt="HomeAssist Logo" class="nav-logo">
+      <span class="brand-text">Home<span class="assist-highlight">Assist</span>.</span>
+    </a>
+    <a href="index.html" style="text-decoration:none; color:var(--uc-text-muted); font-weight:600; font-size:14px;">← Back to Home</a>
+  </nav>
+
+  <div class="policy-wrapper">
+    <aside class="policy-nav">
+      <h4>Navigation</h4>
+      <a href="#intro" class="nav-item">Introduction</a>
+      <a href="#data" class="nav-item">Data Collection</a>
+      <a href="#usage" class="nav-item">Data Usage</a>
+      <a href="#security" class="nav-item">Security</a>
+      <a href="#contact" class="nav-item">Support</a>
+    </aside>
+
+    <main class="policy-content">
+      <span class="updated-tag">Last Updated April 2026</span>
+      <h1>Privacy Policy</h1>
+      <p>At <strong>HomeAssist</strong>, we specialize in luxury home maintenance and lifestyle services. Protecting the privacy of our clients in Bharuch is our top priority.</p>
+
+      <section id="intro">
+        <h2>Introduction</h2>
+        <p>This policy outlines how HomeAssist manages information collected through our digital service platform for maintenance, cleaning, and security solutions.</p>
+      </section>
+
+      <section id="data">
+        <h2>Data Collection</h2>
+        <p>To provide high-quality home visits in Bharuch, we collect:</p>
+        <ul>
+          <li>Full name and contact information.</li>
+          <li>Service address for dispatching technicians.</li>
+          <li>Service history for tailored maintenance.</li>
+        </ul>
+      </section>
+
+      <section id="usage">
+        <h2>How We Use Data</h2>
+        <p>We utilize your data to facilitate premium home care:</p>
+        <ul>
+          <li>Scheduling appointments for electrical, plumbing, or cleaning.</li>
+          <li>Coordinating with verified professionals for home visits.</li>
+          <li>Processing secure transactions for services rendered.</li>
+        </ul>
+      </section>
+
+      <section id="security">
+        <h2>Security Standards</h2>
+        <p>We implement robust encryption to safeguard your data. Your contact details are only shared with the specific professional assigned to your home for the duration of the task.</p>
+      </section>
+
+      <section id="contact">
+        <h2>Contact Us</h2>
+        <p>For questions regarding your data or our practices in Bharuch, please reach out:</p>
+        <p style="background:#f1f5f9; padding:20px; border-radius:15px; border-left:4px solid var(--uc-brand);">
+          <strong>Email:</strong> support@homeassist.com<br>
+          <strong>Headquarters:</strong> Bharuch, Gujarat, India
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 HomeAssist India. All rights reserved. <br> Delivering excellence to every home in Bharuch.</p>
+  </footer>
+
+</body>
+</html>

@@ -3,59 +3,247 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="favicon.png.png"> 
-<title>Home Assist | Trusted Home Services</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <title>About Us | Home Assist - All-in-One Home Services</title>
+  
+  <link rel="icon" type="image/png" href="logo.png">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
   <style>
-    :root { --primary: #2563eb; --secondary: #3b82f6; --glass: rgba(255, 255, 255, 0.95); }
-    body { font-family: 'Poppins', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; }
-    
-    .navbar { background: var(--glass); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0; padding: 10px 20px; }
-    .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
-    .logo-container { display: flex; align-items: center; text-decoration: none; gap: 12px; }
-    .logo-img { width: 40px; height: 40px; }
-    .logo-text { font-size: 24px; font-weight: 700; color: var(--primary); }
-    .nav-links { display: flex; gap: 20px; align-items: center; }
-    .nav-links a { text-decoration: none; color: #64748b; font-size: 14px; font-weight: 500; }
+    :root {
+      --brand-purple: #673ab7; 
+      --brand-dark: #0f172a;
+      --text-gray: #64748b;
+      --card-bg: #ffffff;
+    }
 
-    .about-hero { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; padding: 100px 20px; text-align: center; }
-    .content-section { max-width: 800px; margin: -50px auto 50px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-    h2 { color: var(--primary); }
-    .stats { display: flex; justify-content: space-around; margin-top: 30px; text-align: center; }
-    .stat-item h3 { font-size: 2rem; margin: 0; color: var(--primary); }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #fcfcfd;
+      color: var(--brand-dark);
+      margin: 0;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-    
+    /* Navbar */
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #f1f5f9;
+      padding: 15px 5%;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo {
+      height: 35px;
+      width: auto;
+    }
+
+    .brand-logo-text {
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--brand-dark);
+    }
+
+    .purple-text { color: var(--brand-purple); }
+
+    /* Hero Section with Sliding Background */
+    .hero-banner {
+      position: relative;
+      padding: 140px 20px;
+      text-align: center;
+      color: white;
+      overflow: hidden;
+      background-color: var(--brand-dark);
+    }
+
+    .hero-banner::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 400%; 
+      height: 100%;
+      z-index: 1;
+      background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
+                  url('https://images.unsplash.com/photo-1581578731522-9b7d718607db?auto=format&fit=crop&q=80&w=1200'),
+                  url('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=1200'),
+                  url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1200'),
+                  url('https://images.unsplash.com/photo-1581578731522-9b7d718607db?auto=format&fit=crop&q=80&w=1200');
+      background-size: 25% 100%;
+      background-position: left;
+      background-repeat: repeat-x;
+      animation: slideBackground 30s linear infinite;
+    }
+
+    .hero-banner h1, .hero-banner p {
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes slideBackground {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1100px;
+      margin: -60px auto 60px;
+      padding: 0 20px;
+    }
+
+    .mission-card {
+      position: relative;
+      z-index: 10;
+      background: var(--card-bg);
+      padding: 50px;
+      border-radius: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    /* Ecosystem Grid */
+    .ecosystem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 50px;
+    }
+
+    .eco-item {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px solid #f1f5f9;
+      transition: 0.3s ease;
+    }
+
+    .eco-item:hover {
+      border-color: var(--brand-purple);
+      transform: translateY(-5px);
+    }
+
+    .eco-icon { font-size: 45px; margin-bottom: 20px; }
+
+    /* Stats Section */
+    .stats-container {
+      text-align: center;
+      margin-top: 80px;
+      padding: 60px;
+      background: #f1f5f9;
+      border-radius: 30px;
+    }
+
+    .stats-flex {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat-val { color: var(--brand-purple); font-size: 2.2rem; font-weight: 800; margin: 0; }
+
+    footer {
+      background: var(--brand-dark);
+      color: white;
+      padding: 40px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .hero-banner h1 { font-size: 2.2rem; }
+      .mission-card { padding: 30px 20px; }
+    }
   </style>
 </head>
 <body>
+
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="logo-container">
-        <img src="logo.png.png" alt="Logo" class="logo-img">
-        <span class="logo-text">Home Assist</span>
+      <a href="index.html" class="brand-wrap">
+        <img src="logo.png.png" alt="Home Assist Logo" class="nav-logo">
+        <span class="brand-logo-text">Home<span class="purple-text">Assist</span>.</span>
       </a>
-      <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="index.html#services">Services</a>
-        <a href="contact.html">Contact Us</a>
+      <nav>
+        <a href="index.html" style="text-decoration:none; color:var(--text-gray); font-weight:600;">Home</a>
       </nav>
     </div>
   </header>
 
-  <section class="about-hero">
-    <h1>Our Mission</h1>
-    <p>Connecting you with the best experts in town.</p>
+  <section class="hero-banner">
+    <h1>More Than Just Maintenance.</h1>
+    <p style="font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">Premium solutions for every home need, delivered with trust and care.</p>
   </section>
 
-  <main class="content-section">
-    <h2>Who We Are</h2>
-    <p>Home Assist was founded with a simple goal: to make home maintenance stress-free. We vet every professional to ensure you get high-quality service every time.</p>
-    
-    <div class="stats">
-      <div class="stat-item"><h3>500+</h3><p>Experts</p></div>
-      <div class="stat-item"><h3>10k+</h3><p>Happy Users</p></div>
-      <div class="stat-item"><h3>4.8/5</h3><p>Rating</p></div>
+  <main class="main-content">
+    <div class="mission-card">
+      <h2>Reliability Across Every Service</h2>
+      <p style="color: var(--text-gray); font-size: 17px; max-width: 850px; margin: 0 auto;">
+        Founded in 2024, Home Assist is committed to elevating home care for the **Bharuch** community. We bring together hand-picked experts to ensure your maintenance, cleaning, and lifestyle needs are met with excellence.
+      </p>
+    </div>
+
+    <div class="ecosystem-grid">
+      <div class="eco-item">
+        <div class="eco-icon">🛠️</div>
+        <h3>Home Repairs</h3>
+        <p style="color:var(--text-gray);">Expert electrical, plumbing, and carpentry support for your daily essentials.</p>
+      </div>
+
+      <div class="eco-item">
+        <div class="eco-icon">✨</div>
+        <h3>Cleaning & Hygiene</h3>
+        <p style="color:var(--text-gray);">Deep cleaning and pest control services to keep your home healthy and spotless.</p>
+      </div>
+
+      <div class="eco-item">
+        <div class="eco-icon">💅</div>
+        <h3>Wellness & Style</h3>
+        <p style="color:var(--text-gray);">Professional salon and grooming services provided in the comfort of your own home.</p>
+      </div>
+
+      <div class="eco-item">
+        <div class="eco-icon">🛡️</div>
+        <h3>Safety & Tech</h3>
+        <p style="color:var(--text-gray);">Providing peace of mind with expert CCTV, networking, and security installations.</p>
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <h2>Commitment to Excellence</h2>
+      <p style="color:var(--text-gray);">Delivering high-quality results consistently for our neighbors in Gujarat.</p>
+      <div class="stats-flex">
+        <div><p class="stat-val">500+</p><p style="margin:0;">Experts</p></div>
+        <div><p class="stat-val">10k+</p><p style="margin:0;">Happy Users</p></div>
+        <div><p class="stat-val">4.8/5</p><p style="margin:0;">User Rating</p></div>
+      </div>
     </div>
   </main>
+
+  <footer>
+    <p>&copy; 2026 HomeAssist India. Serving the Bharuch community with pride.</p>
+  </footer>
+
 </body>
 </html>

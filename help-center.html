@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help Center | Home Assist</title>
+  
+  <link rel="icon" type="image/png" href="logo.png.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --uc-brand: #673ab7; 
+      --uc-dark: #0f172a;
+      --uc-text-muted: #64748b;
+      --glass: rgba(255, 255, 255, 0.8);
+      --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #fcfcfd;
+      color: var(--uc-dark);
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    /* Navbar Styling */
+    .navbar {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      position: fixed;
+      width: 90%;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 20px;
+      z-index: 2000;
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: var(--card-shadow);
+      padding: 12px 30px;
+      transition: var(--transition);
+    }
+
+    .navbar-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo { height: 35px; width: auto; }
+    .brand-text { font-weight: 800; font-size: 22px; color: var(--uc-dark); }
+    .assist-highlight { color: var(--uc-brand); }
+
+    .nav-links { display: flex; gap: 30px; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--uc-text-muted); font-weight: 600; font-size: 14px; }
+
+    /* Help Hero Section */
+    .help-hero {
+      padding: 180px 20px 80px;
+      background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%);
+      text-align: center;
+    }
+
+    .help-search-pill {
+      background: white;
+      max-width: 600px;
+      margin: 30px auto 0;
+      padding: 8px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+      border: 1px solid #f1f5f9;
+    }
+
+    /* FAQ Categories */
+    .section-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .faq-card {
+      background: white;
+      padding: 30px;
+      border-radius: 24px;
+      border: 1px solid #f1f5f9;
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+    }
+
+    .faq-card:hover { transform: translateY(-5px); border-color: var(--uc-brand); }
+
+    .faq-question {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--uc-dark);
+      display: block;
+    }
+
+    .faq-answer {
+      font-size: 14px;
+      color: var(--uc-text-muted);
+      line-height: 1.6;
+    }
+
+    /* Support Footer */
+    .support-cta {
+      background: var(--uc-dark);
+      color: white;
+      text-align: center;
+      padding: 60px 20px;
+      border-radius: 30px;
+      margin: 40px 20px;
+    }
+
+    .btn-contact {
+      display: inline-block;
+      background: var(--uc-brand);
+      color: white;
+      padding: 15px 40px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .navbar { width: 95%; }
+      .faq-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="brand-wrap">
+        <img src="logo.png.png" alt="Logo" class="nav-logo">
+        <span class="brand-text">Home<span class="assist-highlight">Assist</span>.</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="help-hero">
+      <h1 style="font-weight: 800; font-size: 2.5rem; margin: 0;">How can we <span class="assist-highlight">help you?</span></h1>
+      <p style="color: var(--uc-text-muted);">Search our knowledge base or browse categories below.</p>
+      
+      <div class="help-search-pill">
+        <input type="text" placeholder="Describe your issue (e.g. refund, reschedule)..." style="flex:1; border:none; padding:15px 25px; outline:none; font-size:16px; background:transparent;">
+        <button style="background:var(--uc-brand); color:white; border:none; padding:12px 25px; border-radius:40px; font-weight:600; cursor:pointer;">Search</button>
+      </div>
+    </section>
+
+    <section class="section-container">
+      <h2 style="margin-bottom: 40px;">Popular Questions</h2>
+      
+      <div class="faq-grid">
+        <div class="faq-card">
+          <span class="faq-question">How do I track my service professional?</span>
+          <p class="faq-answer">Once a professional is assigned, you will receive a tracking link via SMS and email to see their real-time location.</p>
+        </div>
+
+        <div class="faq-card">
+          <span class="faq-question">What is the cancellation policy?</span>
+          <p class="faq-answer">Cancellations made 4 hours before the scheduled time are free. Late cancellations may incur a small fee.</p>
+        </div>
+
+        <div class="faq-card">
+          <span class="faq-question">Are the service professionals background-checked?</span>
+          <p class="faq-answer">Yes, every HomeAssist professional undergoes a strict identity and criminal background verification process.</p>
+        </div>
+
+        <div class="faq-card">
+          <span class="faq-question">How can I pay for my service?</span>
+          <p class="faq-answer">We accept all major UPI apps, credit/debit cards, and cash after the service is completed.</p>
+        </div>
+
+        <div class="faq-card">
+          <span class="faq-question">What if I am unhappy with the service?</span>
+          <p class="faq-answer">We offer a 7-day service guarantee. If you aren't satisfied, we will send a pro to re-do the job for free.</p>
+        </div>
+
+        <div class="faq-card">
+          <span class="faq-question">Do you offer services outside of Bharuch?</span>
+          <p class="faq-answer">Currently, we are exclusively serving the Bharuch district to ensure the highest quality of local care.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="support-cta">
+      <h2>Still need help?</h2>
+      <p style="color: #94a3b8;">Our support team is available from 8 AM to 10 PM daily.</p>
+      <a href="mailto:ranapratham80@gmail.com?subject=Support Request - HomeAssist" class="btn-contact">Contact Support</a>
+    </section>
+  </main>
+
+  <footer style="padding: 40px 20px; text-align: center; color: var(--uc-text-muted); font-size: 13px;">
+    &copy; 2026 HomeAssist India. All rights reserved.
+  </footer>
+
+  <script>
+    // Smooth navbar transition on scroll
+    window.onscroll = () => {
+      const nav = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        nav.style.width = '100%';
+        nav.style.top = '0';
+        nav.style.borderRadius = '0';
+      } else {
+        nav.style.width = '90%';
+        nav.style.top = '20px';
+        nav.style.borderRadius = '20px';
+      }
+    };
+  </script>
+</body>
+</html>
